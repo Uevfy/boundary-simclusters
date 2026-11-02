@@ -1,7 +1,6 @@
 # Reading the nanoML files correctly
 
-The branches in these files can mislead: some names promise more than the branch holds, and
-the two files of a pair do not line up row by row. This page lists what to do and why. The
+This page lists what certain branches do and explains the why and how events are paired. The
 code already follows it; read it before writing anything new against the files. Branch by
 branch reference: `docs/schema.md`.
 
