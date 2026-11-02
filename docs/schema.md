@@ -1,4 +1,4 @@
-# ROOT/nanoML schema reference
+# ROOT/nanoML schema reference (OUTDATED)
 
 All 288 branches of the `Events` tree, grouped by collection and by relation
 within each collection. Confirmed identical (name, type, count) across all
