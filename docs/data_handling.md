@@ -64,21 +64,6 @@ Nothing in nanoML records a particle's fate after the boundary. With `trackId` u
 crossing has nowhere to be stored, these files cannot test whether particles leave and re-enter. That needs the
 Geant4 history in RECO.
 
-## The two SimTrack momenta
-
-| branch | what it is |
-|---|---|
-| `SimTrack_pt`, `_eta`, `_phi` | momentum **at production** |
-| `SimTrack_boundaryMomentum_*` | momentum **when the boundary record was taken**, 0 if there is none |
-
-Evidence: a gun electron has p = 200.00 GeV in a 200 GeV sample in both configs, while its `boundaryMomentum` is far
-lower and differs by config. A photon that radiates nothing has the two equal to six digits. The legs of a conversion
-have production momenta averaging 200.0001 GeV in total over 1035 CaloParticles.
-
-- **Do not sum production momenta over a decomposition.** SimCluster tracks nest, so the sum double-counts ancestry: 321 GeV
-  per 200 GeV electron CaloParticle. It is additive only for a conversion pair.
-- **`boundaryMomentum` is a momentum and `boundaryEnergy` an energy including rest mass.** They differ by 0.511 MeV for an
-  electron and 940 MeV for a neutron.
 
 ## Other branches
 
