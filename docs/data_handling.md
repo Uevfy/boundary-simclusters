@@ -48,7 +48,6 @@ Geant4 history in RECO.
 ## Other branches
 
 - **`SimCluster_boundaryPmag`, `SimCluster_boundaryPt`:** the momentum at the crossing, one value per SimCluster.
-- **`SimCluster_boundaryP4`:** a single small float per SimCluster, not a four-vector. Its meaning is unclear, so do not rely on it.
 - **Hit sharing:** hits are not an observable in this analysis, but the association is fractional. `RecHitHGC_SimClusterNumMatch`
   gives how many SimClusters share a hit, and `RecHitHGC_SimCluster_MatchIdx` and `_MatchQual` hold their indices and energy
   fractions, flattened so that `len(MatchIdx) == sum(NumMatch)`. The fractions sum to 1 for every matched hit.
