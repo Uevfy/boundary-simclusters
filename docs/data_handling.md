@@ -10,8 +10,7 @@ branch reference: `docs/schema.md`.
 **Events are not row-aligned.** Row `i` in the Standard file and row `i` in the FineCalo file are
 usually different events: comparing them directly silently compares unrelated events.
 
-**`run`, `luminosityBlock` and `event` do not identify events across files.** Joining on `event`
-lands on a different physical event in 973 of 1000 cases. They are most likely per-job counters.
+**`run`, `luminosityBlock` and `event` do not identify events across files.** 
 
 **Pair events on the generator record.** The sorted (`pdgId`, `pt`, `eta`, `phi`) of the
 GenParticles is bit-identical across a true pair and unique per event in these samples, because
@@ -38,24 +37,8 @@ They answer different questions, and mixing them biases any energy-weighted resu
 
 **`SimCluster_impactPoint_eta` is the momentum direction, not the position angle.** For where a crossing is,
 compute η from `impactPoint_x/y/z`; for where it was going, use the branch. `impactPoint_phi` behaves the same way.
+ |
 
-| crossings | η from `x/y/z`, median | branch, median | median difference |
-|---|---|---|---|
-| on the front face | 2.265 | 2.216 | 0.014 |
-| off the front face | 3.156 | 1.785 | **1.360** |
-
-The η figures and η-band results use the branch. On the front face, which holds 99.9% of crossings in the electron
-samples, the difference is very unlikely to move a result, but this was not verified sample by sample. Do not quote
-those numbers as positions.
-
-**`SimTrack_lastPos_*` is not where a track ended.** For a track that crossed the boundary it is a copy of
-`boundaryPos`, identical to within 10⁻³ cm for all 361,550 crossing tracks in the FineCalo file. `SimCluster_lastPos_*`
-behaves the same way.
-
-| track | `boundaryPos` | `lastPos` |
-|---|---|---|
-| crossed the boundary | the crossing point | a copy of the crossing point |
-| did not cross | 0 (unset) | a real endpoint |
 
 Nothing in nanoML records a particle's fate after the boundary. With `trackId` unique within an event, so a second
 crossing has nowhere to be stored, these files cannot test whether particles leave and re-enter. That needs the
