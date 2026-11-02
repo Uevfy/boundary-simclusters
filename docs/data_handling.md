@@ -5,9 +5,6 @@ the two files of a pair do not line up row by row. This page lists what to do an
 code already follows it; read it before writing anything new against the files. Branch by
 branch reference: `docs/schema.md`.
 
-Numbers come from the files named in the README. Unless a section says otherwise, they are from
-the 200 GeV electron pair.
-
 ## Pairing the two files
 
 **Events are not row-aligned.** Row `i` in the Standard file and row `i` in the FineCalo file are
