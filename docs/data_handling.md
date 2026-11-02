@@ -48,31 +48,15 @@ photon has 2 Standard SimClusters against 1 FineCalo, and the other 1 against 2.
 **Empty branches.** `CaloPart_GenPartIdx` is −1 and `CaloPart_simEnergy` is 0 for every CaloParticle in
 every file. Neither carries information, so there is no direct link from a CaloParticle to its GenPart.
 
-## The three SimCluster energies
+## The SimCluster energies
 
 They answer different questions, and mixing them biases any energy-weighted result.
 
 | branch | what it is | can you sum it? |
 |---|---|---|
-| `SimCluster_boundaryEnergy` | energy the particle carried at the crossing: kinematic, not a deposit | yes on the legacy collection, see below |
+| `SimCluster_boundaryEnergy` | energy the particle carried at the crossing: kinematic, not a deposit | yes on the legacy collection |
 | `SimCluster_recEnergy` | reconstructed hit energy assigned to this SimCluster alone | yes |
-| `SimCluster_sumHitEnergy` | simulated hit energy of this SimCluster and its descendants | **never** |
 
-- **`boundaryEnergy` is a true energy.** With `SimCluster_boundaryPmag`, `E² − p²` recovers the PDG rest
-  mass of each species to five decimals (neutron 0.93957 GeV, proton 0.93827, π± 0.13957, μ 0.10567). `E = |p|`
-  holds for 99.84–99.90% of SimClusters. A sum of deposits could not do this.
-- **Its sum depends on the collection.** On the legacy collection the crossings add up to about the gun energy.
-  The boundary collection leaves out crossings that have an ancestor which crossed, so its sum is much lower:
-  for 20 GeV electrons in Standard, 0.42 of the gun energy against 0.98 on the legacy collection.
-- **`recEnergy` is the same in both configs per CaloParticle.** Both share the same RecHits, and each hit's
-  energy is split with fractions summing to one, so regrouping cannot change the total. This makes it a
-  useful control.
-- **`sumHitEnergy` double-counts.** A hit counts for a descendant and for its ancestors, so it reaches about
-  321 GeV (Standard) and 419 GeV (FineCalo) per 200 GeV electron on the legacy collection.
-
-Worked example, one 200 GeV primary electron: `boundaryEnergy` 157.24 GeV, `recEnergy` 153.59 GeV,
-`sumHitEnergy` 200.00 GeV. It crossed with 157 GeV after radiating about 43 GeV, and those photons cross as
-SimClusters of their own.
 
 ## Rest mass and `SimCluster_mass`
 
