@@ -7,11 +7,6 @@ two CMSSW mechanisms hand a later step the same inputs for identical simulated e
 (`useFineCalo=0`, "fc0") give the same decomposition of a CaloParticle into boundary
 SimClusters?**
 
-The definition of a shower rooted at the calorimeter boundary follows K. Schaeuble et al.,
-"Detector-aware target definitions for full-event particle reconstruction"
-(arXiv:2606.30485). A CaloParticle groups everything from one primary particle, and can
-hold several boundary SimClusters, for example a photon converting just before the
-calorimeter.
 
 Figures from this project are **not CMS-approved**.
 
@@ -24,14 +19,6 @@ Figures from this project are **not CMS-approved**.
 3. Run `scripts/analyze.py` on one pair, then look through its report and figures.
 4. Write your own study, as described in [Adding a study](#adding-a-study).
 
-## Read this before comparing numbers
-
-The two configs do not record on the same surface. Standard tests the Geant4 volume `CALO`
-and FineCalo tests `HGCal`, whose front faces lie at |z| = 293.5 cm and 321.05 cm, with
-material in between. Standard also flags a track whose first step is already inside `CALO`.
-A raw fc0-vs-fc1 count or spectrum therefore mixes the mechanism with the surface. Energy is
-not part of the classification: an electron loses a median of ~70% of its kinetic energy in
-that gap.
 
 ## Setup
 
