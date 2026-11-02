@@ -21,29 +21,8 @@ GenParticles is bit-identical across a true pair and unique per event in these s
 the guns draw η and φ per event. A second method, a fingerprint of RecHit count and total energy,
 agrees on every event and remains as a cross-check, and the pairing stops if the two disagree.
 
-| sample | events paired, of 1000 | events with CaloParticles in another order |
-|---|---|---|
-| e⁻ 200 GeV | 995 | 0 |
-| e⁻ 20 GeV | 998 | 0 |
-| γ 200 GeV | 971 | 1 |
-| γ 20 GeV | 992 | 2 |
-
-Both methods leave the same events unpaired, so those events are absent from the other file
-rather than missed by the matcher.
-
-The cause is most likely multithreaded production: a 100-event pair produced with one thread lines
-up perfectly on row order, on `event` and on the fingerprint. One small sample does not prove this,
-but the contrast with every multithreaded pair makes coincidence unlikely.
-
-The GEN key depends on the gun. NanoML stores η and φ coarsely, so one particle's (η, φ) can repeat:
-it is unique in only 994 of 1000 events. The key is unique here because the gun fires two independent
-particles. A one-particle gun at around 1000 events per file, or a gun with every variable fixed, would
-repeat keys. Repeated keys are left unmatched and reported, and the fingerprint is the fallback.
-
 **Pair CaloParticles on exact (`pdgId`, `eta`, `phi`), never by index.** Their stored order can differ
-between the files (table above), and `CaloPart_trackId` swaps with them. Pairing by index matters in
-practice: in the swapped γ 200 GeV event it reads as two 1:1 decompositions, while paired correctly one
-photon has 2 Standard SimClusters against 1 FineCalo, and the other 1 against 2.
+between the files, and `CaloPart_trackId` swaps with them. 
 
 **Empty branches.** `CaloPart_GenPartIdx` is −1 and `CaloPart_simEnergy` is 0 for every CaloParticle in
 every file. Neither carries information, so there is no direct link from a CaloParticle to its GenPart.
@@ -57,23 +36,6 @@ They answer different questions, and mixing them biases any energy-weighted resu
 | `SimCluster_boundaryEnergy` | energy the particle carried at the crossing: kinematic, not a deposit | yes on the legacy collection |
 | `SimCluster_recEnergy` | reconstructed hit energy assigned to this SimCluster alone | yes |
 
-
-## Rest mass and `SimCluster_mass`
-
-**`boundaryEnergy` includes the rest mass, so soft hadrons look hard.** Among the crossings off the front face:
-
-| species | `boundaryEnergy` median | kinetic energy median |
-|---|---|---|
-| photon | 0.026 GeV | 0.026 GeV |
-| neutron | 0.951 GeV | **0.011 GeV** |
-| proton | 1.198 GeV | 0.260 GeV |
-
-Any threshold, sum or ranking across species is partly a ranking of rest masses. To ask how energetic an object
-was, use `boundary_geometry.kinetic_energy(E, P)`, which is `E − sqrt(E² − P²)`.
-
-**`SimCluster_mass` is not a rest mass.** 23.7% of its values are negative, and it reads ±0.0625 and ±0.0884 GeV
-for electrons. Its meaning is undetermined, so do not use it. Compute `sqrt(E² − p²)` or look the mass up from
-`SimCluster_pdgId`.
 
 ## Positions and directions
 
