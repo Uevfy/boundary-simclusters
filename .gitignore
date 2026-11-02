@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+.DS_Store
+
+# The data and everything derived from it stay out of git (README, Data).
+*.root
+data/
+outputs/
+d121/

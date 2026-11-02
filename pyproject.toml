@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "boundary-simclusters"
+version = "0.1.0"
+description = "FineCalo vs Standard CMSSW: boundary SimCluster decomposition analysis"
+requires-python = ">=3.10"
+# The environment is pinned in requirements.txt; install that first, then
+# `pip install -e .` from the repo root to make the package importable.
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
