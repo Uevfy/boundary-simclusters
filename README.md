@@ -12,10 +12,9 @@ Figures from this project are **not CMS-approved**.
 ## Where to start
 
 1. Follow [Setup](#setup), then produce a sample pair as described in [Data](#data).
-2. Read `docs/data_handling.md`. The branches have traps, such as events that do not line up
    between the files and an `eta` branch that is not a position.
-3. Run `scripts/analyze.py` on one pair, then look through its report and figures.
-4. Write your own study, as described in [Adding a study](#adding-a-study).
+2. Run `scripts/analyze.py` on one pair, then look through its report and figures.
+3. Write your own study, as described in [Adding a study](#adding-a-study).
 
 ## Setup
 
