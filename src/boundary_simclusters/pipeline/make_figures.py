@@ -96,16 +96,6 @@ def steps(ax, values, bins, key, label, **kw):
     return counts
 
 
-def config_of(key):
-    """The config of a series key: "fc1", or the first part of ("fc1", "legacy")."""
-    return key if isinstance(key, str) else key[0]
-
-
-def who(key):
-    """A series in running text: "Standard", or "Standard (legacy)"."""
-    return LABELS[config_of(key)] + ("" if isinstance(key, str) else f" ({key[1]})")
-
-
 def z_label():
     return "$|z|$ of impact point  [cm]"
 
@@ -119,16 +109,6 @@ def on_face(d):
     return plane, front_face_mask(d.abs_z.to_numpy(), plane)
 
 
-def on_plane_title(frames):
-    """Does each config actually record on a plane? Computed, never hard-coded:
-    the photon pair puts only 86% of Standard's crossings on one."""
-    shares = {k: float(on_face(frames[k])[1].mean()) for k in KEYS}
-    worst = min(shares, key=shares.get)
-    if shares[worst] > 0.95:
-        return "Each config records on its own front face"
-    return f"Only {100 * shares[worst]:.0f}% of {who(worst)}'s crossings are on its front face"
-
-
 def figure_position_z(frames, tag):
     fig, ax = single_figure()
     pooled = np.concatenate([frames[k].abs_z for k in KEYS])
@@ -138,7 +118,7 @@ def figure_position_z(frames, tag):
         steps(ax, frames[key].abs_z, bins, key,
               f"{SERIES[key]}  ({100 * mask.mean():.2f}% at {plane:.1f} cm)")
     ax.set_yscale("log")
-    return finish(fig, ax, f"position_z_{tag}.png", title=on_plane_title(frames),
+    return finish(fig, ax, f"position_z_{tag}.png", title="$|z|$ of the boundary crossings",
                   xlabel=z_label(), ylabel="SimClusters")
 
 
@@ -217,8 +197,6 @@ PARTICLE_TYPES = (("photon", 22), ("$e^-$", 11), ("$e^+$", -11))
 TYPE_COLOUR = {"photon": "#c99700", "$e^-$": "#199c8e", "$e^+$": "#7d4bb0"}
 # Past this point Standard keeps too few objects for the ratio to mean anything.
 MIN_COUNT = 25
-# A mix this close counts as "the same": the electron sample's largest gap is 3.9 pp.
-SAME_MIX_PP = 5.0
 
 
 def shares(d):
@@ -231,27 +209,6 @@ def shares(d):
                            for n, code in PARTICLE_TYPES},
         "other_share": 100 * (len(pdg) - sum(counts.values())) / len(pdg),
     }
-
-
-def mix_title(s):
-    if "fc1" not in s:                      # a comparison figure: no single pair to rank
-        return "Particle-type mix at the crossing, both collections"
-    diffs = {n: s["fc1"]["count_share"][n] - s["fc0"]["count_share"][n] for n, _ in PARTICLE_TYPES}
-    biggest = max(diffs, key=lambda n: abs(diffs[n]))
-    if abs(diffs[biggest]) < SAME_MIX_PP:
-        return "Both configs cross the boundary with the same particle-type mix"
-    direction = "more" if diffs[biggest] > 0 else "fewer"
-    return f"The particle-type mix differs: {abs(diffs[biggest]):.0f} pp {direction} {biggest} in FineCalo"
-
-
-def momentum_title(s):
-    if "fc1" not in s:
-        return "Momentum share per particle type, both collections"
-    diffs = {n: s["fc1"]["momentum_share"][n] - s["fc0"]["momentum_share"][n] for n, _ in PARTICLE_TYPES}
-    winner = max(diffs, key=diffs.get)
-    if diffs[winner] < SAME_MIX_PP:
-        return "Both configs share the momentum across particle types alike"
-    return f"FineCalo moves {diffs[winner]:+.0f} pp of the momentum onto {winner}"
 
 
 def type_bars(ax, s, field, labels):
@@ -277,7 +234,7 @@ def figure_type_count(frames, tag):
     s = {k: shares(frames[k]) for k in KEYS}
     type_bars(ax, s, "count_share",
               {k: f"{SERIES[k]}  (hadrons + other {s[k]['other_share']:.2f}%)" for k in KEYS})
-    return finish(fig, ax, f"type_count_{tag}.png", title=mix_title(s),
+    return finish(fig, ax, f"type_count_{tag}.png", title="SimClusters per particle type",
                   xlabel="Particle type at the crossing",
                   ylabel="Share of SimClusters  [%]")
 
@@ -286,7 +243,7 @@ def figure_type_momentum(frames, tag):
     fig, ax = single_figure()
     s = {k: shares(frames[k]) for k in KEYS}
     type_bars(ax, s, "momentum_share", SERIES)
-    return finish(fig, ax, f"type_momentum_{tag}.png", title=momentum_title(s),
+    return finish(fig, ax, f"type_momentum_{tag}.png", title="Momentum per particle type at the crossing",
                   xlabel="Particle type at the crossing",
                   ylabel="Share of $\\Sigma\\,|\\vec{p}\\,|$ at the crossing  [%]")
 
@@ -378,7 +335,7 @@ def figure_ekin_per_caloparticle(ekin, e_gun, tag):
     ax.set_xlim(0.0, bins[-1])
     ax.set_yscale("log")
     return finish(fig, ax, f"ekin_per_caloparticle_{tag}.png", loc="upper left",
-                  title="Energy booked at the boundary per CaloParticle",
+                  title="Kinetic energy at the boundary per CaloParticle",
                   xlabel="$\\Sigma E_\\mathrm{kin}$ / $E_\\mathrm{gun}$ per CaloParticle",
                   ylabel="CaloParticles")
 
@@ -414,7 +371,7 @@ def figure_rec_over_ekin(frames, tag):
     ax.set_xscale("log")
     ax.set_yscale("log")
     return finish(fig, ax, f"rec_over_ekin_{tag}.png", loc="upper right",
-                  title="Hit energy against the energy brought across, per SimCluster",
+                  title="Reconstructed over kinetic energy per SimCluster",
                   xlabel="Reconstructed energy / $E_\\mathrm{kin}$ at the crossing",
                   ylabel="Fraction of SimClusters")
 

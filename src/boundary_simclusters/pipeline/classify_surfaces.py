@@ -189,7 +189,7 @@ def figure_classes(frames, figdir, tag, prefix):
     ax.set_xticks(x)
     ax.set_xticklabels(list(FIGURE_CLASSES))
     return finish(fig, ax, figdir / f"surface_classes_{tag}.png",
-                  title="Where the SimClusters sit",
+                  title="SimClusters per surface class",
                   xlabel="Class of the crossing, on each configuration's own volume",
                   ylabel="SimClusters")
 

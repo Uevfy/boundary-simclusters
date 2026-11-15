@@ -209,12 +209,12 @@ def main():
     report_topologies(data)
     print()
     print("wrote", figure_vs_eta(data, "other replacement", SPECIES, "lost_in_gap_vs_eta_bound.png",
-                                 "Reaching Standard's surface but not FineCalo's",
+                                 "Objects lost in the gap vs $|\\eta|$",
                                  "CaloParticles with an object\nlost in the gap  [%]"))
     if any(s.particle == "photon" for s, _, _ in data.values()):
         print("wrote", figure_vs_eta(data, "photon conversion", ("photon",),
                                      "gap_conversions_vs_eta_bound.png",
-                                     "Photons converting between the two surfaces",
+                                     "Gap conversions vs $|\\eta|$",
                                      "CaloParticles with a gap conversion  [%]"))
 
 

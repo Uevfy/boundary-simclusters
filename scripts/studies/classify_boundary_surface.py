@@ -329,7 +329,7 @@ def figure_envelope(data, surfaces, material, tag, figdir, energy, dash="-"):
         (full, (270, 525), (0, 170), "the boundary envelopes and the material"),
         # Wide enough to hold both bore steps and the radial jump between them:
         # the staircase is the shape claim, and one step alone does not show it.
-        (zoom, (315, 412), (24, 40), "the bore staircase, and its clearance"),
+        (zoom, (315, 412), (24, 40), "zoom on the bore"),
     ):
         span = ((material["abs_z"] >= zlo) & (material["abs_z"] <= zhi)
                 & (material["r"] >= rlo) & (material["r"] <= rhi))
