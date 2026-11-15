@@ -113,19 +113,19 @@ printed is saved as `report_<tag>[_bound].txt` beside the figures.
 ### classify.py
 
 Gives each CaloParticle one class (`classify_decompositions`). Give the files in any order: RECO
-and nanoML are told apart by their contents. The first run reads the RECO files, a few minutes
-each, and keeps the parent links in `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`. Later runs
-reuse them and need only the nanoML files; delete them to read RECO again. If `analyze.py` has
-not paired the events yet, `classify.py` does that first. It writes
+and nanoML are told apart by their contents. The first run reads the RECO files and keeps the
+parent links in `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`. Later runs reuse them and
+need only the nanoML files; delete them to read RECO again. If `analyze.py` has not paired the
+events yet, `classify.py` does that first. It writes
 `data/processed/decompositions_<tag>[_bound].parquet` (one row per CaloParticle) and
 `decomposition_simclusters_<tag>[_bound].parquet` (one row per SimCluster), and prints to
 `report_<tag>[_bound]_classes.txt` beside `analyze.py`'s report. `--table legacy` classifies the
 legacy collection.
 
 **How SimClusters are compared.** Across configs, within a matched CaloParticle, SimClusters
-are compared by the Geant4 track that opened each. A track stored in both files of a pair carries the same ID, because both
-configs simulate the same physics from the same seed; `id_agreement` repeats this check on
-every run and stops if it fails. Track IDs restart per event, so they cannot pair events. Each
+are compared by the Geant4 track that opened each. A track stored in both files of a pair
+carries the same ID, because both configs simulate the same physics from the same seed;
+`id_agreement` repeats this check on every run and stops if it fails. Track IDs restart per event, so they cannot pair events. Each
 CaloParticle gets one class on the boundary collection:
 
 | class | meaning |

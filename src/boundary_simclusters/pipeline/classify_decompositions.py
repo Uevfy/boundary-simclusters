@@ -88,7 +88,7 @@ def write_ancestry(sample, reco_paths):
             for k in KEYS}
     written = {}
     for path in reco_paths:
-        print(f"reading {path.name} (a few minutes)")
+        print(f"reading {path.name}")
         tracks, vertices = read(path)
         for key in (k for k in KEYS if k not in written):
             try:

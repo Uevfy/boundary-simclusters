@@ -15,9 +15,9 @@ Give the files in any order: RECO and nanoML are told apart by their contents,
 and each RECO file is tied to the nanoML file it was made from by its rows.
 Give one nanoML file and its partner is found in the same folder.
 
-    ancestry   nanoML has no parent links, so they are read from RECO once
-               (minutes per file) into data/processed/ancestry_<tag>_<fc0|fc1>.parquet
-               and reused afterwards: later runs need no RECO. Delete those
+    ancestry   nanoML has no parent links, so they are read from RECO once into
+               data/processed/ancestry_<tag>_<fc0|fc1>.parquet and reused
+               afterwards: later runs need no RECO. Delete those
                files to read RECO again.
     match      the event and CaloParticle pairing of analyze.py's match step,
                run here if it has not been yet
