@@ -50,10 +50,7 @@ git clone -b d121-production https://github.com/Uevfy/production_tests.git
 
 A pair is the same gun run twice with the same seed, once per config (`useFineCalo=0` for
 Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML. The original
-results come from two-particle guns in |η| 1.70–2.70, 1000 events, seed 1: e⁻ and γ at 20 and
-200 GeV, `CMSSW_20_0_0_pre1`, global tag `150X_mcRun4_realistic_v1`, HGCal v17 and caloBase
-2030/v7. Those samples were made with `master-production`; `d121-production` gives the same
-SimClusters event by event.
+results come from two-particle guns in |η| 1.70–2.70, 1000 events, seed 1: e⁻ and γ at 20 and 200 GeV. Those samples were made with `master-production`; `d121-production` gives the same SimClusters event by event.
 
 **Keep the RECO files.** NanoML has no parent links, so the classification reads them from
 RECO, through `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`:
