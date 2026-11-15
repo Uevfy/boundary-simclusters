@@ -59,7 +59,8 @@ git clone -b d121-production https://github.com/Uevfy/production_tests.git
 cd production_tests
 ```
 
-The reco-prodtools fork already holds the fragments the samples were made with, so its
+The `d121-production` README names the `dgaytanv` repositories in its setup; use these forks
+instead. The reco-prodtools fork already holds the fragments the samples were made with, so its
 `produceSkeletons_D121.sh` does not need to run.
 
 **A pair** is the same gun run twice with the same seed, once per config (`useFineCalo=0` for
