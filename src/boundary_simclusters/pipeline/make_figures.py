@@ -1,7 +1,7 @@
 """The standard run's figures for one fc0/fc1 pair: file in, figures out.
 
     python scripts/analyze.py bound_photon_fc0_200GeV_testNanoML.root --steps figures
-    python scripts/analyze.py a.root b.root --steps figures --table legacy --tag s1
+    python scripts/analyze.py a.root b.root --steps figures --table legacy
     python scripts/analyze.py a.root --steps figures --only energy n_per_event
 
 `run(sample)` is the figures step of scripts/analyze.py.

@@ -1,7 +1,7 @@
 """Which face of its config's boundary volume each crossing hit: file in, census out.
 
     python scripts/analyze.py bound_photon_fc0_200GeV_testNanoML.root --steps surfaces
-    python scripts/analyze.py a.root b.root --steps surfaces --table legacy --tag s1 --excel
+    python scripts/analyze.py a.root b.root --steps surfaces --table legacy --excel
 
 The surfaces step of scripts/analyze.py, `run(sample)`.
 

@@ -1,7 +1,7 @@
 """The standard run on one fc0/fc1 pair, in one command: nanoML file(s) in, results out.
 
     python scripts/analyze.py bound_electron_fc0_20GeV_testNanoML.root
-    python scripts/analyze.py a.root b.root --table legacy --tag s1
+    python scripts/analyze.py a.root b.root --table legacy
     python scripts/analyze.py a.root --steps summary figures
     python scripts/analyze.py a.root --steps figures --only energy n_per_event
     python scripts/analyze.py other/a.root other/b.root --root other --tag e20_other
@@ -102,7 +102,7 @@ def main():
     ap.add_argument("--table", choices=samples.TABLES,
                     help="default: boundary where both files carry it, else legacy")
     ap.add_argument("--tag", help="label for the output files; default: an existing "
-                    "mapping's tag for these files, else the Standard file's stem")
+                    "mapping's tag for these files, else <particle>_<energy>, e.g. photon_20GeV")
     ap.add_argument("--steps", nargs="+", choices=STEPS, default=list(STEPS),
                     help="run only these steps (in the standard order); summary needs "
                     "the mappings from match, of this or an earlier run")

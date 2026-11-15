@@ -191,8 +191,11 @@ def existing_tag(fc0, fc1):
 def load_sample(first, second=None, tag=None):
     """The pair `first` belongs to, in either order; its partner is found if not given.
 
-    The tag is, in order: the one given, the one an existing mapping of these
-    two files was written under, or the fc0 file's stem. It is a label only.
+    The tag labels every output of the pair. It is, in order: the one given, the
+    one an existing mapping of these two files was written under, or
+    `<particle>_<energy>` read from the contents (`photon_20GeV`), so every script
+    picks the same one whatever the files are called. Give one only to keep two
+    samples of the same particle and energy apart.
     """
     second = second or find_partner(first)
     found = {d["config"]: d for d in (describe(first), describe(second))}
@@ -206,7 +209,7 @@ def load_sample(first, second=None, tag=None):
     if gen_overlap(events(fc0["path"]), events(fc1["path"])) < MIN_GEN_OVERLAP:
         raise SystemExit(f"{fc0['path'].name} and {fc1['path'].name} do not hold "
                          f"the same events (GEN keys do not overlap)")
-    tag = tag or existing_tag(fc0["path"], fc1["path"]) or fc0["path"].stem
+    tag = tag or existing_tag(fc0["path"], fc1["path"]) or f"{fc0['particle']}_{fc0['energy']}"
     tables = [t for t in TABLES if t in fc0["tables"] and t in fc1["tables"]]
     return Sample(tag=tag, files={"fc0": fc0["path"], "fc1": fc1["path"]},
                   particle=fc0["particle"], energy=fc0["energy"], tables=tables)

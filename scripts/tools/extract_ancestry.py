@@ -42,7 +42,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0],
                                  formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("files", nargs=4, type=Path, help="both nanoML and both RECO files, any order")
-    ap.add_argument("--tag")
+    ap.add_argument("--tag", help="as for analyze.py; default <particle>_<energy>, e.g. photon_20GeV")
     ap.add_argument("--root", type=Path, help="write under this tree instead of the repo's")
     args = ap.parse_args()
     reco = [f for f in args.files if TRACKS in uproot.open(f)["Events"].keys(recursive=False)]
