@@ -9,7 +9,7 @@ branch reference: `docs/schema.md`.
 **Events are not row-aligned.** Row `i` in the Standard file and row `i` in the FineCalo file are
 usually different events: comparing them directly silently compares unrelated events.
 
-**`run`, `luminosityBlock` and `event` do not identify events across files.** 
+**`run`, `luminosityBlock` and `event` do not identify events across files.**
 
 **Pair events on the generator record.** The sorted (`pdgId`, `pt`, `eta`, `phi`) of the
 GenParticles is bit-identical across a true pair and unique per event in these samples, because
@@ -17,7 +17,7 @@ the guns draw η and φ per event. A second method, a fingerprint of RecHit coun
 agrees on every event and remains as a cross-check, and the pairing stops if the two disagree.
 
 **Pair CaloParticles on exact (`pdgId`, `eta`, `phi`), never by index.** Their stored order can differ
-between the files, and `CaloPart_trackId` swaps with them. 
+between the files, and `CaloPart_trackId` swaps with them.
 
 **Empty branches.** `CaloPart_GenPartIdx` is −1 and `CaloPart_simEnergy` is 0 for every CaloParticle in
 every file. Neither carries information, so there is no direct link from a CaloParticle to its GenPart.
@@ -31,18 +31,14 @@ They answer different questions, and mixing them biases any energy-weighted resu
 | `SimCluster_boundaryEnergy` | energy the particle carried at the crossing: kinematic, not a deposit | yes on the legacy collection |
 | `SimCluster_recEnergy` | reconstructed hit energy assigned to this SimCluster alone | yes |
 
-
 ## Positions and directions
 
 **`SimCluster_impactPoint_eta` is the momentum direction, not the position angle.** For where a crossing is,
 compute η from `impactPoint_x/y/z`; for where it was going, use the branch. `impactPoint_phi` behaves the same way.
- |
-
 
 Nothing in nanoML records a particle's fate after the boundary. With `trackId` unique within an event, so a second
 crossing has nowhere to be stored, these files cannot test whether particles leave and re-enter. That needs the
 Geant4 history in RECO.
-
 
 ## Other branches
 

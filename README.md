@@ -7,7 +7,6 @@ two CMSSW mechanisms hand a later step the same inputs for identical simulated e
 (`useFineCalo=0`, "fc0") give the same decomposition of a CaloParticle into boundary
 SimClusters?**
 
-
 Figures from this project are **not CMS-approved**.
 
 ## Where to start
@@ -19,11 +18,11 @@ Figures from this project are **not CMS-approved**.
 3. Run `scripts/analyze.py` on one pair, then look through its report and figures.
 4. Write your own study, as described in [Adding a study](#adding-a-study).
 
-
 ## Setup
 
-Python 3.10 or newer; the versions in `requirements.txt` are the tested ones. Nothing here
-needs CMSSW or ROOT: `uproot` reads the files.
+Python 3.11 or newer (the pinned pandas and numpy need it); the versions in
+`requirements.txt` are the tested ones. Nothing here needs CMSSW or ROOT: `uproot` reads
+the files.
 
 ```bash
 python3 -m venv venv
