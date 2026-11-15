@@ -15,7 +15,7 @@ Every fact about a sample is read from the file's contents, never from its name
 so a new file needs no edit anywhere before it can be analysed.
 
 `simcluster_frame` is the one per-SimCluster reader: kinematics, the envelope face
-it landed on, kinetic energy (docs/data_handling.md) and the ancestry the
+it landed on, kinetic energy (`boundaryEnergy` minus rest mass) and the ancestry the
 nano file can support (`ancestry`). Mappings between the two files of a pair come
 from the match step (`pipeline.match_events`) and are found by the file names they record.
 
@@ -248,8 +248,10 @@ def ancestry(root_track, root_pdg, calopart_track, calopart_pdg, face):
     relation         species pattern of root vs CaloParticle (`relation`)
     born_inside      flagged at its vertex inside the volume, on no face
 
-    The chain between primary and root is not in nanoML: no parent track and no
-    production vertex (docs/data_handling.md), and `SimTrack_*SimClusterIdx` points
+    The chain between primary and root is not in nanoML: it has no parent links
+    (docs/data_handling.md; production and decay vertices exist only for the
+    tracks with a TrackingParticle, `TrackingPart_Vtx_*` / `_DecayVtx_*`), and
+    `SimTrack_*SimClusterIdx` points
     only at each SimCluster's root track, never at what was folded into it.
     Parent branches added to nanoML_cfg.py would extend this function with the
     chain (depth, intermediate species); every column above stays valid.

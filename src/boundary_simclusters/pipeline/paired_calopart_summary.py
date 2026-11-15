@@ -18,8 +18,9 @@ partner is found -- and the output is `paired_calopart_<tag>.parquet` on the
 legacy table, `paired_calopart_<tag>_bound.parquet` on the boundary table.
 
 Read `docs/data_handling.md` before quoting any energy: `boundaryEnergy` is
-kinematic and additive, `recEnergy` is an exclusive deposit, `sumHitEnergy` is
-inclusive and must never be summed as a budget.
+kinematic and includes rest mass, `recEnergy` is an exclusive deposit,
+`sumHitEnergy` counts a hit for a SimCluster and for its ancestors, so it must
+never be summed as a budget.
 
 The summary step of scripts/analyze.py (`--steps summary`), `run(sample, table)`
 for the tests. The pair needs its mappings first (`pipeline.match_events`).
@@ -181,7 +182,8 @@ def report_energy(paired):
     print(f"\ncorrelation(relative difference, FineCalo SimCluster count): "
           f"{paired.delta_rel.corr(paired.n_fc1):+.3f}")
 
-    # recEnergy is forced to agree (docs/data_handling.md); it is the control that says a
+    # recEnergy is forced to agree: both configs share the same RecHits, and each hit's
+    # energy is split with fractions summing to one. It is the control that says a
     # boundaryEnergy deficit is bookkeeping, not lost energy.
     section("3. Sigma recEnergy per CaloParticle (control)")
     for k in KEYS:

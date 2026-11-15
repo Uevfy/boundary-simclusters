@@ -1,6 +1,7 @@
 """Read Geant4's SimTracks and SimVertices from a RECO file, without CMSSW.
 
-The nano files have no parent-track or production-vertex branches, and their
+The nano files have no parent-track branches (production vertices only for the
+tracks with a TrackingParticle, `TrackingPart_Vtx_*`), and their
 SimTrack table is a filtered subset (27823 of 31001 tracks in the γ 20 GeV
 Standard sample). The RECO file keeps the full `g4SimHits` collections, and with
 them the ancestry: a track's `ivert` indexes the vertex list, and that vertex's

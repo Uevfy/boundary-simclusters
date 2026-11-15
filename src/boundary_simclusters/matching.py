@@ -2,9 +2,10 @@
 CaloParticles within each event. The library behind `pipeline.match_events`.
 
 fc0 and fc1 hold the same physical events, but not in the same row order, and
-the `run`/`luminosityBlock`/`event` branches cannot join them (docs/data_handling.md). Events are paired on their generator record -- the sorted (pdgId, pt, eta,
-phi) of every GenPart, bit-identical for a true pair -- cross-checked
-against a RecHit fingerprint, and the CaloParticles of each matched event on
+the `run`/`luminosityBlock`/`event` branches cannot join them
+(docs/data_handling.md). Events are paired on their generator record -- the
+sorted (pdgId, pt, eta, phi) of every GenPart, bit-identical for a true pair --
+cross-checked against a RecHit fingerprint, and the CaloParticles of each matched event on
 exact (pdgId, eta, phi), since their stored order differs between the files in
 some events. Repeated keys are left unmatched rather than guessed at.
 

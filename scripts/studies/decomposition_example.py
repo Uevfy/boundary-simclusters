@@ -53,7 +53,7 @@ Takes one pair (`samples.py`) and needs its CaloParticle match
    particles get a SimCluster). Saved to outputs/<particle>/<energy>/<table>/
    (`_bound` for the boundary collection; a chosen pattern adds its name).
 
-Energies are kinetic (docs/data_handling.md): at the crossing, or for a particle
+Energies are kinetic (`boundaryEnergy` minus rest mass): at the crossing, or for a particle
 created inside at its creation. Which particle radiated which is not in the
 file (no parent branches), so the sketch's branching points are drawn, not
 measured; a particle without a SimCluster of its own is drawn from the root

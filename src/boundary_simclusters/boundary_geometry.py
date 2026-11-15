@@ -194,7 +194,10 @@ def beta(x, y, z, t_seconds):
 
 
 def kinetic_energy(energy, pmag):
-    """`boundaryEnergy` minus the rest mass it includes — see docs/data_handling.md.
+    """`boundaryEnergy` minus the rest mass it includes.
+
+    `boundaryEnergy` is a true energy, so for a hadron it is mostly rest mass:
+    a soft neutron reads ~0.94 GeV. Rank or sum across species with this instead.
 
     E - sqrt(E^2 - P^2). The clip is float32 hygiene: for a photon E and P are
     the same number to within rounding and the difference can go slightly

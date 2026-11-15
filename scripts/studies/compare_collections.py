@@ -15,8 +15,7 @@ Per sample and per (config, collection):
 - **SimClusters per CaloParticle** (total, mean, median), and how many legacy
   SimClusters one boundary SimCluster stands for
 - **energy closure**: sum of kinetic energies per CaloParticle over the gun
-  energy (kinetic, not `boundaryEnergy`, which includes rest mass,
-  docs/data_handling.md)
+  energy (kinetic, not `boundaryEnergy`, which includes rest mass)
 - **species mix**, **faces** (main face, other faces, interior, bore entries) and the share of **soft** SimClusters (below 0.1% of the gun energy)
 - **the Standard/FineCalo comparison on each collection**: ratio of mean
   counts, share of CaloParticles with equal counts, FineCalo more or fewer

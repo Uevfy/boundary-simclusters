@@ -21,8 +21,9 @@ join them (see docs/data_handling.md). This step:
    at first. If a future gun fixes every generator variable, the GEN key
    collapses and the fingerprint is the fallback.
 4. Pairs the CaloParticles within every matched event on exact (pdgId, eta,
-   phi). Their stored order is not the same in both files (docs/data_handling.md), so no script may assume index `cp` is the same particle on both
-   sides. Raises unless every CaloParticle pairs 1:1.
+   phi). Their stored order is not the same in both files
+   (docs/data_handling.md), so no script may assume index `cp` is the same
+   particle on both sides. Raises unless every CaloParticle pairs 1:1.
 5. Reports events left unmatched rather than forcing or silently dropping
    them.
 6. Writes the validated mappings to data/processed/event_matching_<tag>.parquet

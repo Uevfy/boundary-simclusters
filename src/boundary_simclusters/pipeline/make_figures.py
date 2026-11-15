@@ -44,9 +44,9 @@ filename is `--tag` or the sample's (`samples.py`), plus `_bound` on the
 boundary table.
 
 `boundaryPmag` is not drawn as a distribution: E = |p| for 99.84-99.90% of
-SimClusters (docs/data_handling.md), so it would repeat `energy`. The energy-weighted
-spectrum uses kinetic energy, not `boundaryEnergy`, which includes rest mass
-(docs/data_handling.md).
+SimClusters, so it would repeat `energy`. The energy-weighted spectrum uses
+kinetic energy, not `boundaryEnergy`, which includes rest mass
+(`boundary_geometry.kinetic_energy`).
 """
 
 
@@ -394,7 +394,7 @@ def figure_rec_over_ekin(frames, tag):
     hundreds -- they hold the hits of folded-in particles but only the root
     track's energy. Each curve is normalised to its own SimClusters, since the
     legacy table has 5-50 times more; kinetic energy, since rest mass is not
-    deposited (docs/data_handling.md)."""
+    deposited."""
     fig, ax = single_figure()
     bins = np.logspace(-3, 4, 71)
     for key in KEYS:

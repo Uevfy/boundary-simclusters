@@ -20,10 +20,9 @@ events. Marker sizes share one scale across both configs of the event, so
 they can be compared. `--single` draws only the file given, at its own row,
 without pairing.
 
-Marker size is kinetic energy, not `boundaryEnergy`, which includes rest mass
-(docs/data_handling.md). Everything drawn is read from the branches: no parent
-links or production vertices exist (docs/data_handling.md), so nothing here is a
-reconstructed shower history.
+Marker size is kinetic energy, not `boundaryEnergy`, which includes rest mass.
+Everything drawn is read from the branches: nanoML has no parent links
+(docs/data_handling.md), so nothing here is a reconstructed shower history.
 
 Figures in outputs/<particle>/<energy>/<table>/ as
 scatter_{xy,rz}_<tag>_ev<row>_cp<n>_<config>.png, where <row> is the Standard

@@ -50,7 +50,8 @@ KEYS = ("fc0", "fc1")
 LABELS = {"fc0": "Standard", "fc1": "FineCalo"}
 COLORS = config_colours("legacy")         # this study reads the legacy table
 
-# RecHits are identical in both configs (docs/data_handling.md), so the material map is
+# RecHits are identical in both configs (the event pairing's RecHit fingerprint
+# agrees on every event), so the material map is
 # read from fc0 only, and from a slice of it: 300 events is already 13.2M hits,
 # and the map is a geometric envelope that does not sharpen with more.
 MATERIAL_EVENTS = 300
