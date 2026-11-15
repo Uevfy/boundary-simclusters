@@ -15,9 +15,6 @@ and the tables are read from the contents (`samples.py`). The steps of
     summary    paired per-CaloParticle comparison   data/processed/paired_calopart_<tag>[_bound].parquet
     figures    the standard figures                 outputs/<particle>/<energy>/<table>/
     surfaces   which boundary face each crossing hit data/processed/surface_<tag>[_bound].parquet + figures
-    decompositions  each CaloParticle's decomposition    data/processed/decompositions_<tag>_bound.parquet
-               compared by root track (each table its own classes;
-               parent links from scripts/tools/extract_ancestry.py)
     compare    the figures and surface figures with  outputs/<particle>/<energy>/comparisons/
                both collections overlaid             (pairs carrying both tables only)
 
@@ -25,6 +22,9 @@ Everything printed is also written to report_<tag>[_bound].txt in the figure
 folder, and the run ends with the headline numbers. Boundary table by default
 where both files carry it, `--table legacy` for the legacy one. `--steps` runs a subset (summary needs the mappings of a match run),
 `--only` a subset of the figures.
+
+The classification of each CaloParticle's decomposition needs RECO as well and
+is the second command, scripts/classify.py.
 """
 
 import argparse
@@ -34,10 +34,10 @@ from pathlib import Path
 
 from boundary_simclusters import output_paths, samples
 from boundary_simclusters.output_paths import table_dir
-from boundary_simclusters.pipeline import (classify_decompositions, classify_surfaces, make_figures,
-                                           match_events, paired_calopart_summary)
+from boundary_simclusters.pipeline import (classify_surfaces, make_figures, match_events,
+                                           paired_calopart_summary)
 
-STEPS = ("match", "summary", "figures", "surfaces", "decompositions", "compare")
+STEPS = ("match", "summary", "figures", "surfaces", "compare")
 
 
 class Tee:
@@ -83,10 +83,6 @@ def headline(sample, table, results):
             parts = ", ".join(f"{c} {counts.get(c, 0)} ({100 * counts.get(c, 0) / counts.sum():.1f}%)"
                               for c in classify_surfaces.CLASSES)
             print(f"  {samples.LABELS[key]:9s} {parts}")
-    if results.get("decompositions") is not None:
-        shares = results["decompositions"][0]["class"].value_counts(normalize=True)
-        print("classes  " + ", ".join(f"{c} {100 * shares.get(c, 0):.1f}%"
-                                      for c in shares.index))
     if results.get("compare"):
         print(f"compare  {len(results['compare'])} figures with both collections in "
               f"{Path(results['compare'][0]).parent}/")
@@ -140,7 +136,6 @@ def run(args, ap):
         "summary": lambda: paired_calopart_summary.run(sample, table),
         "figures": lambda: make_figures.run(sample, table, args.only),
         "surfaces": lambda: classify_surfaces.run(sample, table, excel=args.excel),
-        "decompositions": lambda: classify_decompositions.run(sample, table),
         "compare": lambda: (make_figures.compare(sample, args.only) + classify_surfaces.compare(sample)
                             if {"boundary", "legacy"} <= set(sample.tables)
                             else print("Comparison figures need both SimCluster tables: skipped")),

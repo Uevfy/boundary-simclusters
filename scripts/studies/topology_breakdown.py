@@ -5,7 +5,7 @@
 Takes the nanoML files of several samples, pairs them among themselves
 (`samples.py`) and reads each pair's classification
 (`decompositions_<tag>_bound.parquet`, `decomposition_simclusters_<tag>_bound.parquet`,
-written by the decompositions step of scripts/analyze.py). Species
+written by scripts/classify.py). Species
 and energy are the samples themselves; within a sample the breakdown is in the
 CaloParticle's |eta|, in five bins over the gun band. Shares carry binomial
 errors, sqrt(p(1 - p) / n).
@@ -54,8 +54,7 @@ def load(files):
         paths = [output_paths.PROCESSED / f"{name}_{sample.tag}_bound.parquet"
                  for name in ("decompositions", "decomposition_simclusters")]
         if not all(p.exists() for p in paths):
-            raise SystemExit(f"{sample.tag}: run python scripts/analyze.py {Path(f).name} first "
-                             "(needs the decompositions step)")
+            raise SystemExit(f"{sample.tag}: run python scripts/classify.py {Path(f).name} with its RECO files first")
         out[sample.tag] = (sample, *(pd.read_parquet(p) for p in paths))
     order = lambda tag: (out[tag][0].particle, -float(out[tag][0].energy.replace("GeV", "")))
     return {tag: out[tag] for tag in sorted(out, key=order)}

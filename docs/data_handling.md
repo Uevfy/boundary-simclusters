@@ -46,4 +46,4 @@ Geant4 history in RECO.
 - **Hit sharing:** hits are not an observable in this analysis, but the association is fractional. `RecHitHGC_SimClusterNumMatch`
   gives how many SimClusters share a hit, and `RecHitHGC_SimCluster_MatchIdx` and `_MatchQual` hold their indices and energy
   fractions, flattened so that `len(MatchIdx) == sum(NumMatch)`. The fractions sum to 1 for every matched hit.
-- **Parent links:** nanoML has none, so ancestry comes from RECO (`scripts/tools/extract_ancestry.py`).
+- **Parent links:** nanoML has none, so ancestry comes from RECO (`scripts/classify.py`).

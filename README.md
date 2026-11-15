@@ -12,7 +12,8 @@ Figures from this project are **not CMS-approved**.
 ## Where to start
 
 1. Follow [Setup](#setup), then produce a sample pair as described in [Data](#data).
-2. Run `scripts/analyze.py` on one pair, then look through its report and figures.
+2. Run `scripts/analyze.py` and `scripts/classify.py` on one pair (see [Running it](#running-it)),
+   then look through their reports and figures.
 3. Write your own study, as described in [Adding a study](#adding-a-study).
 
 ## Setup
@@ -55,16 +56,10 @@ A pair is the same gun run twice with the same seed, once per config (`useFineCa
 Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML. The original
 results come from two-particle guns in |η| 1.70–2.70, 1000 events, seed 1: e⁻ and γ at 20 and 200 GeV. Those samples were made with `master-production`; `d121-production` gives the same SimClusters event by event.
 
-**Keep the RECO files.** NanoML has no parent links, so the classification reads them from
-RECO, through `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`:
-
-```bash
-python scripts/tools/extract_ancestry.py photon_20GeV_fc0_NanoML.root photon_20GeV_fc1_NanoML.root \
-    photon_20GeV_fc0_RECO.root photon_20GeV_fc1_RECO.root
-```
-
-Without those files a CaloParticle whose root tracks differ can only be called
-`different tracks`, and the run warns.
+**Keep the RECO files.** NanoML has no parent links, so the classification (`classify.py`)
+reads them from RECO. It does so once per pair and keeps them in
+`data/processed/ancestry_<tag>_<fc0|fc1>.parquet`; after that the RECO files are needed only to
+read them again.
 
 ### Naming files and tags
 
@@ -80,8 +75,8 @@ in `.root` works. A readable scheme, used in the examples here:
 with `fc0` for Standard (`useFineCalo=0`) and `fc1` for FineCalo (`useFineCalo=1`). Two things to know:
 
 - **The tag** is chosen for you. Every output of a pair carries a label, its tag, built from the
-  contents as `<particle>_<energy>`: `ancestry_photon_20GeV_fc0.parquet`,
-  `report_photon_20GeV_bound.txt`, `n_per_event_photon_20GeV_bound.png`. Every script picks the
+  contents as `<particle>_<energy>`: `report_photon_20GeV_bound.txt`,
+  `ancestry_photon_20GeV_fc0.parquet`, `n_per_event_photon_20GeV_bound.png`. Every script picks the
   same one, so the steps find each other's outputs. Give `--tag` only to keep apart two samples
   of the same particle and energy, such as another seed or another production, and then give
   that same tag to every script of the pair.
@@ -91,9 +86,16 @@ with `fc0` for Standard (`useFineCalo=0`) and `fc1` for FineCalo (`useFineCalo=1
 
 ## Running it
 
+Two commands per pair: `analyze.py` reads the nanoML files, `classify.py` the nanoML and the
+RECO files.
+
 ```bash
 python scripts/analyze.py photon_20GeV_fc0_NanoML.root photon_20GeV_fc1_NanoML.root
+python scripts/classify.py photon_20GeV_fc0_NanoML.root photon_20GeV_fc1_NanoML.root \
+    photon_20GeV_fc0_RECO.root photon_20GeV_fc1_RECO.root
 ```
+
+### analyze.py
 
 Give both files of a pair, in either order; with one, its partner is searched for in the same
 folder. The default is the boundary collection (`BoundarySimCluster_*`), and `--table legacy`
@@ -106,13 +108,22 @@ printed is saved as `report_<tag>[_bound].txt` beside the figures.
 | `summary` | `paired_calopart_summary` | the paired per-CaloParticle comparison | `data/processed/paired_calopart_<tag>[_bound].parquet` |
 | `figures` | `make_figures` | position, η, energy, pT, species, multiplicity and spectra | `outputs/<particle>/<energy>/<table>/` |
 | `surfaces` | `classify_surfaces` | which face of its config's volume each crossing hit | figures, `data/processed/surface_<tag>[_bound].parquet` |
-| `decompositions` | `classify_decompositions` | compares each CaloParticle's SimClusters by root track, one class each | `data/processed/decompositions_<tag>[_bound].parquet`, `decomposition_simclusters_<tag>[_bound].parquet` |
 | `compare` | `make_figures`, `classify_surfaces` | the figures again with both collections overlaid | `outputs/<particle>/<energy>/comparisons/` |
 
-### How SimClusters are compared
+### classify.py
 
-Across configs, within a matched CaloParticle, SimClusters are compared by the Geant4 track
-that opened each. A track stored in both files of a pair carries the same ID, because both
+Gives each CaloParticle one class (`classify_decompositions`). Give the files in any order: RECO
+and nanoML are told apart by their contents. The first run reads the RECO files, a few minutes
+each, and keeps the parent links in `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`. Later runs
+reuse them and need only the nanoML files; delete them to read RECO again. If `analyze.py` has
+not paired the events yet, `classify.py` does that first. It writes
+`data/processed/decompositions_<tag>[_bound].parquet` (one row per CaloParticle) and
+`decomposition_simclusters_<tag>[_bound].parquet` (one row per SimCluster), and prints to
+`report_<tag>[_bound]_classes.txt` beside `analyze.py`'s report. `--table legacy` classifies the
+legacy collection.
+
+**How SimClusters are compared.** Across configs, within a matched CaloParticle, SimClusters
+are compared by the Geant4 track that opened each. A track stored in both files of a pair carries the same ID, because both
 configs simulate the same physics from the same seed; `id_agreement` repeats this check on
 every run and stops if it fails. Track IDs restart per event, so they cannot pair events. Each
 CaloParticle gets one class on the boundary collection:
@@ -130,11 +141,11 @@ The legacy collection has its own classes (`LEGACY_CLASSES` in `classify_decompo
 
 ## Studies and tools
 
-Each takes nanoML files; the classes they read come from `analyze.py`.
+Each takes nanoML files; the classes they read come from `classify.py`.
 
 | script | what it does | input |
 |---|---|---|
-| `studies/topology_breakdown.py` | the classes by species, energy and \|η\|, with binomial errors; figures vs \|η\| | `bound_*` files, after `analyze.py` |
+| `studies/topology_breakdown.py` | the classes by species, energy and \|η\|, with binomial errors; figures vs \|η\| | `bound_*` files, after `classify.py` |
 | `studies/classify_boundary_surface.py` | each surface measured against the CMSSW source radii, its standoff from the sensitive material, the envelope figure | a pair |
 | `studies/reco_crosscheck.py` | radiation lengths before and in the gap, from where gun photons convert | both RECO files and both nanoML files of a pair |
 | `studies/check_boundary_nesting.py` | tests the boundary-SimCluster rule against full Geant4 ancestry | a RECO file and its nanoML |
@@ -142,7 +153,6 @@ Each takes nanoML files; the classes they read come from `analyze.py`.
 | `studies/event_scatter.py` | event display of one event in both configs; draws only what the branches say | a pair and `--row` |
 | `studies/decomposition_example.py` | one CaloParticle's decomposition into SimClusters, per collection | a pair, after `analyze.py --steps match` |
 | `studies/compare_productions.py` | one gun sample from two productions, event by event. It needs each production's ancestry for classes; the per-CaloParticle comparison uses counts only | two pairs, `--root <tree> --tag <tag>` |
-| `tools/extract_ancestry.py` | writes the ancestry parquets from RECO | both nanoML and both RECO files of a pair |
 | `tools/print_root_branches.py` | branch names and types, the source of `docs/schema.md` | nanoML files |
 
 ## Adding a study
@@ -174,7 +184,7 @@ src/boundary_simclusters/     the library, imported and never run
     reco_simtracks.py         Geant4 tracks and parent links from RECO, without CMSSW
     hep_style.py              the figure style
     output_paths.py           where each output belongs, read from the data
-scripts/                      analyze.py, studies/, tools/
+scripts/                      analyze.py, classify.py, studies/, tools/
 docs/                         see Documentation below
 ```
 

@@ -1,7 +1,8 @@
 """The standard run's headline numbers for one pair, as one nested dict.
 
 `measure(sample, table)` runs every step on `sample` (the five `run()`
-functions, as scripts/analyze.py does) and returns the numbers below.
+functions, as scripts/analyze.py and scripts/classify.py do) and returns the
+numbers below.
 scripts/studies/compare_productions.py sets them side by side for two productions
 of one sample.
 

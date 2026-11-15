@@ -9,8 +9,8 @@ stops if it ever fails, so it has to hold for any new production too. Every
 SimCluster counts, on whichever face it lies.
 
 Where the two sets of root tracks differ, the parent links say how
-(data/processed/ancestry_<tag>_<config>.parquet, scripts/tools/extract_ancestry.py;
-RECO only, nanoML has none). A FineCalo-only root is followed up its parent chain
+(data/processed/ancestry_<tag>_<config>.parquet, written from RECO by
+`write_ancestry`; nanoML has none). scripts/classify.py writes them and runs this. A FineCalo-only root is followed up its parent chain
 to a Standard-only root. Each CaloParticle then has one class:
 
     same tracks         both configs record the same root tracks
@@ -46,6 +46,7 @@ import pandas as pd
 
 from boundary_simclusters import output_paths, samples
 from boundary_simclusters.boundary_geometry import label_crossings
+from boundary_simclusters.reco_simtracks import check_alignment, read
 
 KEYS = samples.KEYS
 CLASSES = ("same tracks", "photon conversion", "other replacement", "no descendant", "mixed",
@@ -54,6 +55,55 @@ LEGACY_CLASSES = ("same tracks", "additions", "replacement", "below finecalo", "
                   "no descendant", "mixed", "different tracks")
 CONVERSION = 14                 # Geant4 process subtype of SimVertex.procType
 PHOTON_ENERGY_TOLERANCE = 1e-5  # relative
+
+
+def ancestry_path(tag, key):
+    """Where config `key`'s parent links of the pair `tag` are written."""
+    return output_paths.PROCESSED / f"ancestry_{tag.removesuffix('legacy')}_{key}.parquet"
+
+
+def ancestry_table(tracks, vertices):
+    """One row per Geant4 track: its parent, species, creating process and birth
+    point. `event` is the row of the nanoML file the RECO file lines up with."""
+    frames = []
+    for event, (t, v) in enumerate(zip(tracks, vertices)):
+        vertex = t["ivert"]
+        frames.append(pd.DataFrame({
+            "event": event,
+            "track": t["trackId"].astype(np.int64),
+            "parent": v["parentTrackId"][vertex].astype(np.int64),
+            "pdg": t["pdgId"].astype(np.int32),
+            "process": v["procType"][vertex].astype(np.int32),
+            "birth_abs_z": np.abs(v["pos"][vertex, 2]).astype(float),
+            "birth_r": np.hypot(v["pos"][vertex, 0], v["pos"][vertex, 1]).astype(float)}))
+    return pd.concat(frames, ignore_index=True)
+
+
+def write_ancestry(sample, reco_paths):
+    """Read each RECO file once, tie it to the config whose nanoML rows it lines
+    up with (`check_alignment`; RECO file names say nothing reliable), and write
+    that config's parent links. Returns {config: written path}."""
+    output_paths.PROCESSED.mkdir(parents=True, exist_ok=True)
+    nano = {k: sample.tree(k).arrays(["SimTrack_trackId", "SimTrack_pdgId"], library="np")
+            for k in KEYS}
+    written = {}
+    for path in reco_paths:
+        print(f"reading {path.name} (a few minutes)")
+        tracks, vertices = read(path)
+        for key in (k for k in KEYS if k not in written):
+            try:
+                check_alignment(tracks, nano[key])
+            except SystemExit:
+                continue
+            out = ancestry_path(sample.tag, key)
+            ancestry_table(tracks, vertices).to_parquet(out, index=False)
+            print(f"{samples.LABELS[key]}: {path.name} -> {out.name}")
+            written[key] = out
+            break
+    missing = [samples.LABELS[k] for k in KEYS if k not in written]
+    if missing:
+        raise SystemExit(f"no RECO file given lines up with the {' or '.join(missing)} nanoML file")
+    return written
 
 
 def read_ancestry(tag, key):
@@ -172,7 +222,7 @@ def compare(sample, tag, table):
     ancestry_std = read_ancestry(tag, "fc0") if table == "legacy" else None
     if ancestry is None:
         print(f"WARNING: no ancestry parquet for {tag}, so every differing CaloParticle is "
-              "'different tracks'. Write it with scripts/tools/extract_ancestry.py.")
+              "'different tracks'. Run scripts/classify.py with the RECO files.")
     rows, clusters = [], []
     for n, cp in enumerate(caloparts.itertuples()):
         a = groups["fc0"].get((cp.fc0_row, cp.fc0_cp), empty["fc0"])
