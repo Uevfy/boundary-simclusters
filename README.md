@@ -12,7 +12,6 @@ Figures from this project are **not CMS-approved**.
 ## Where to start
 
 1. Follow [Setup](#setup), then produce a sample pair as described in [Data](#data).
-   between the files and an `eta` branch that is not a position.
 2. Run `scripts/analyze.py` on one pair, then look through its report and figures.
 3. Write your own study, as described in [Adding a study](#adding-a-study).
 
