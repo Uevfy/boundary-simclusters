@@ -43,18 +43,33 @@ production run in CMSSW, outside this repository. Use these branches:
 | [Uevfy/cmssw](https://github.com/Uevfy/cmssw/tree/thesis-production) | `thesis-production` | the pepr `CMSSW_20_0_0_pre1` used for the samples |
 | [Uevfy/reco-prodtools](https://github.com/Uevfy/reco-prodtools/tree/thesis-production) | `thesis-production` | the fragments `GSD_GUN.py` and `RECO.py` import (GSD Standard and FineCalo, RECO) as used for the samples, and `produceSkeletons_D121.sh` |
 
-Follow the setup in the `d121-production` README, but take these forks instead of the
-`dgaytanv` ones it names:
+**Setup**, on an EL9 node (lxplus9, cmslpc-el9, …) with about 10 GB free:
 
 ```bash
-git cms-merge-topic Uevfy:thesis-production
+export SCRAM_ARCH=el9_amd64_gcc13
+cmsrel CMSSW_20_0_0_pre1
+cd CMSSW_20_0_0_pre1/src
+cmsenv
+git cms-init -y
+git cms-merge-topic Uevfy:thesis-production   # pepr CMSSW + the BoundarySimCluster -> CaloParticle link
+scram b -j 4                                   # more cores can run out of memory on cmslpc
 git clone -b thesis-production https://github.com/Uevfy/reco-prodtools.git reco_prodtools
+scram b                                        # makes reco_prodtools importable
 git clone -b d121-production https://github.com/Uevfy/production_tests.git
+cd production_tests
 ```
 
-A pair is the same gun run twice with the same seed, once per config (`useFineCalo=0` for
-Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML. The original
-results come from two-particle guns in |η| 1.70–2.70, 1000 events, seed 1: e⁻ and γ at 20 and 200 GeV. Those samples were made with `master-production`; `d121-production` gives the same SimClusters event by event.
+The reco-prodtools fork already holds the fragments the samples were made with, so its
+`produceSkeletons_D121.sh` does not need to run.
+
+**A pair** is the same gun run twice with the same seed, once per config (`useFineCalo=0` for
+Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML; the commands are in
+the `d121-production` README. The original results come from two-particle guns in |η| 1.70–2.70:
+e⁻ and γ at 20 and 200 GeV, 1000 events, seed 1. In `GSD_GUN.py` options that is `particle=11` or
+`22`, `minE` and `maxE` both 20 or both 200, `maxEvents=1000`, `seed=1`. Set `minE` and `maxE`:
+run directly with `cmsRun`, the default gun ignores `energy=` and shoots flat in 20–200 GeV. Those
+samples were made with `master-production`; `d121-production` gives the same SimClusters event
+by event.
 
 **Keep the RECO files.** NanoML has no parent links, so the classification (`classify.py`)
 reads them from RECO. It does so once per pair and keeps them in
