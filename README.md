@@ -60,20 +60,39 @@ SimClusters event by event.
 RECO, through `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`:
 
 ```bash
-python scripts/tools/extract_ancestry.py std_NanoML.root fine_NanoML.root std_RECO.root fine_RECO.root --tag g20
+python scripts/tools/extract_ancestry.py photon_20GeV_fc0_NanoML.root photon_20GeV_fc1_NanoML.root \
+    photon_20GeV_fc0_RECO.root photon_20GeV_fc1_RECO.root --tag g20
 ```
 
 Use the same `--tag` as for `analyze.py`. Without those files a CaloParticle whose root tracks
 differ can only be called `different tracks`, and the run warns.
 
-Put both nanoML files of a pair in one folder, since a missing partner is searched for there,
-and keep each production in its own folder. File names carry no meaning: the code reads
-particle, energy and config from the contents.
+### Naming files and tags
+
+The code reads nothing from a file name. Standard or FineCalo, particle and energy come from the
+file contents, and each RECO file is tied to its nanoML file by matching rows, so any name ending
+in `.root` works. A readable scheme, used in the examples here:
+
+```
+<particle>_<energy>_fc<0|1>_NanoML.root     photon_20GeV_fc0_NanoML.root
+<particle>_<energy>_fc<0|1>_RECO.root       photon_20GeV_fc0_RECO.root
+```
+
+with `fc0` for Standard (`useFineCalo=0`) and `fc1` for FineCalo (`useFineCalo=1`). What does matter:
+
+- **The tag.** It names every output: `data/processed/*_<tag>*.parquet`, `report_<tag>.txt` and
+  the figures. Give a short one with `--tag` (`g20`, `e200`), and **the same tag to
+  `extract_ancestry.py` and `analyze.py`**: the classification finds the ancestry files by tag,
+  and under another tag it falls back to `different tracks`. Without `--tag`, the tag is that of
+  an earlier match run on files of the same names, else the Standard file's name without `.root`.
+- **The folder.** Given one file, `analyze.py` looks for its partner among the `.root` files in
+  the same folder, by shared events. Two productions of the same gun and seed in one folder make
+  that ambiguous, and it stops and asks for both files. Keep each production in its own folder.
 
 ## Running it
 
 ```bash
-python scripts/analyze.py bound_photon_fc0_20GeV_testNanoML.root bound_photon_fc1_20GeV_testNanoML.root --tag g20
+python scripts/analyze.py photon_20GeV_fc0_NanoML.root photon_20GeV_fc1_NanoML.root --tag g20
 ```
 
 Give both files of a pair, in either order; with one, its partner is searched for in the same
@@ -134,8 +153,8 @@ in `src/boundary_simclusters/`. Read files through `samples` instead of opening 
 ```python
 from boundary_simclusters import samples
 
-sample = samples.load_sample("bound_photon_fc0_20GeV_testNanoML.root",
-                             "bound_photon_fc1_20GeV_testNanoML.root")
+sample = samples.load_sample("photon_20GeV_fc0_NanoML.root",
+                             "photon_20GeV_fc1_NanoML.root", tag="g20")
 frame = samples.simcluster_frame(sample.tree("fc1"), "boundary", "fc1")   # one row per SimCluster
 ```
 
