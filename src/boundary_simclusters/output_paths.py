@@ -129,5 +129,7 @@ def redirected(workdir):
 def rooted(root):
     """Point `OUT` and `PROCESSED` at `root/outputs`, `root/data/processed` for
     the duration: an analysis tree laid out like the repo's own, for samples kept
-    apart from the main ones (`d121/`)."""
+    apart from the main ones (a second production, say `other/`). Keep such files
+    in their own folder: partner lookup goes by GEN overlap, so two productions of
+    the same gun in one folder can pair across productions."""
     return _writing_to(Path(root) / "outputs", Path(root) / "data" / "processed")

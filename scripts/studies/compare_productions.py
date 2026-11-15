@@ -2,12 +2,13 @@
 
     python scripts/studies/compare_productions.py \\
         bound_electron_fc0_20GeV_testNanoML.root bound_electron_fc1_20GeV_testNanoML.root \\
-        d121/rerun_pre1eta_electron_fc0_20GeV_testNanoML.root \\
-        d121/rerun_pre1eta_electron_fc1_20GeV_testNanoML.root \\
-        --root d121 --tag e20
+        other/bound_electron_fc0_20GeV_testNanoML.root \\
+        other/bound_electron_fc1_20GeV_testNanoML.root \\
+        --root other --tag e20
 
-Old Standard, old FineCalo, new Standard, new FineCalo, in that order. Built for
-master vs pre1_D121 (`d121/`). What it compares, nearest the file first:
+Old Standard, old FineCalo, new Standard, new FineCalo, in that order; the new
+production's files sit in their own folder (`other/`), since partner lookup
+goes by GEN overlap. What it compares, nearest the file first:
 
     overlap    events both productions hold, per config, and where the others sit
     branches   every branch both files carry, event by event on the GEN key.
@@ -191,7 +192,7 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     ap.add_argument("files", nargs=4, type=Path, metavar="ROOT",
                     help="old fc0, old fc1, new fc0, new fc1")
-    ap.add_argument("--root", type=Path, required=True, help="tree the results go to (d121)")
+    ap.add_argument("--root", type=Path, required=True, help="tree the results go to, e.g. the new production's folder")
     ap.add_argument("--tag", required=True, help="sample label, e.g. e20")
     args = ap.parse_args()
 

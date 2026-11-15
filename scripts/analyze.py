@@ -4,7 +4,7 @@
     python scripts/analyze.py a.root b.root --table legacy --tag s1
     python scripts/analyze.py a.root --steps summary figures
     python scripts/analyze.py a.root --steps figures --only energy n_per_event
-    python scripts/analyze.py d121/a.root d121/b.root --root d121 --tag e20_d121
+    python scripts/analyze.py other/a.root other/b.root --root other --tag e20_other
 
 Give one file and its partner is found in the same folder, or give both in
 either order; which is Standard and which FineCalo, the particle, the energy
@@ -113,7 +113,7 @@ def main():
                     help="also write the surface tables as a workbook next to the figures")
     ap.add_argument("--root", type=Path,
                     help="write to ROOT/outputs and ROOT/data/processed instead of the "
-                    "repo's own, for a production kept apart (d121)")
+                    "repo's own, for a second production kept in its own folder")
     args = ap.parse_args()
     if len(args.files) > 2:
         ap.error("one or two files")
