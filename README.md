@@ -22,8 +22,11 @@ Python 3.11 or newer (the pinned pandas and numpy need it); the versions in
 the files.
 
 ```bash
+git clone https://github.com/Uevfy/boundary-simclusters.git
+cd boundary-simclusters
+python3 --version         # 3.11 or newer
 python3 -m venv venv
-source venv/bin/activate
+source venv/bin/activate  # again in every new terminal
 pip install -r requirements.txt
 pip install -e .          # makes src/boundary_simclusters importable
 ```
