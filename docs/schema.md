@@ -1,9 +1,10 @@
-# ROOT/nanoML schema reference (OUTDATED)
+# ROOT/nanoML schema reference
 
-All 288 branches of the `Events` tree, grouped by collection and by relation
-within each collection. Confirmed identical (name, type, count) across all
-original local test files (`testNanoML.root`, `FinetestNanoML.root` and a
-second 200 GeV e⁻ pair since deleted — 1000 events each).
+All 414 branches of the `Events` tree of the `bound_*` nanoML files, grouped by
+collection and by relation within each collection. Identical (name, type) in
+both configs. The older files without the boundary collection (`testNanoML.root`,
+`FinetestNanoML.root`, `11_*`, `22_*`, `photon_*`) carry the first 288 of them:
+everything except the sections and rows marked *`bound_*` only*.
 Regenerate/verify with `scripts/tools/print_root_branches.py`.
 
 Types are as reported by `uproot`; `[]` means one jagged array entry per
@@ -23,7 +24,7 @@ reordered.
 | Identity | `CaloPart_pdgId` | `int32_t[]` | |
 | Identity | `CaloPart_charge` | `int32_t[]` | |
 | Identity | `CaloPart_GenPartIdx` | `int32_t[]` | index into `GenPart` — **−1 for every CaloParticle in every local file**, unusable (docs/data_handling.md) |
-| Identity | `CaloPart_trackId` | `int32_t[]` | G4 track id — not stable across fc0/fc1 |
+| Identity | `CaloPart_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event; its index can differ between the files |
 | Identity | `CaloPart_eventId` | `int32_t[]` | |
 | Identity | `CaloPart_rawEventId` | `int32_t[]` | |
 | Identity | `CaloPart_bunchCrossing` | `int32_t[]` | |
@@ -80,7 +81,7 @@ reordered.
 | Matching to SimCluster | `LayerCluster_SimCluster_MatchQual` | `float[]` | |
 | Matching to SimCluster | `LayerCluster_SimClusterNumMatch` | `int32_t[]` | |
 
-## RecHitHGC (20) — finest-granularity reconstructed hit, with truth links to LayerCluster/SimCluster/MergedSimCluster. Source of the hit-overlap matching this project needs.
+## RecHitHGC (25) — finest-granularity reconstructed hit, with truth links to LayerCluster/SimCluster/BoundarySimCluster/MergedSimCluster. Source of the hit-overlap matching this project needs.
 
 | Subgroup | Field | Type | Note |
 |---|---|---|---|
@@ -99,13 +100,57 @@ reordered.
 | Matching to SimCluster | `RecHitHGC_SimClusterNumMatch` | `int32_t[]` | |
 | Matching to SimCluster | `RecHitHGC_SimClusterBestMatchIdx` | `int32_t[]` | |
 | Matching to SimCluster | `RecHitHGC_SimClusterBestMatchQual` | `int32_t[]` | typed int32 despite looking like a fraction — verify values before trusting as energy fraction |
+| Matching to BoundarySimCluster (*`bound_*` only*) | `RecHitHGC_BoundarySimCluster_MatchIdx` | `int32_t[]` | |
+| Matching to BoundarySimCluster (*`bound_*` only*) | `RecHitHGC_BoundarySimCluster_MatchQual` | `float[]` | |
+| Matching to BoundarySimCluster (*`bound_*` only*) | `RecHitHGC_BoundarySimClusterNumMatch` | `int32_t[]` | |
+| Matching to BoundarySimCluster (*`bound_*` only*) | `RecHitHGC_BoundarySimClusterBestMatchIdx` | `int32_t[]` | |
+| Matching to BoundarySimCluster (*`bound_*` only*) | `RecHitHGC_BoundarySimClusterBestMatchQual` | `int32_t[]` | |
 | Matching to MergedSimCluster | `RecHitHGC_MergedSimCluster_MatchIdx` | `int32_t[]` | |
 | Matching to MergedSimCluster | `RecHitHGC_MergedSimCluster_MatchQual` | `float[]` | |
 | Matching to MergedSimCluster | `RecHitHGC_MergedSimClusterNumMatch` | `int32_t[]` | |
 | Matching to MergedSimCluster | `RecHitHGC_MergedSimClusterBestMatchIdx` | `int32_t[]` | |
 | Matching to MergedSimCluster | `RecHitHGC_MergedSimClusterBestMatchQual` | `int32_t[]` | same int32 caveat as above |
 
-## SimCluster (34) — boundary SimCluster, the central object of this project. Paper concept: SimShower.
+## BoundarySimCluster (34) — *`bound_*` only.* The boundary collection, the central object of this project and the default (`--table boundary`). Paper concept: SimShower. One SimCluster per track that crossed the boundary with no ancestor that crossed; a descendant's hits are folded into it. Same fields as `SimCluster_*`.
+
+| Subgroup | Field | Type | Note |
+|---|---|---|---|
+| Flags | `BoundarySimCluster_allHitsHGCAL` | `bool[]` |  |
+| Flags | `BoundarySimCluster_crossedBoundary` | `bool[]` |  |
+| Flags | `BoundarySimCluster_hasHGCALHit` | `bool[]` |  |
+| Flags | `BoundarySimCluster_isTrainable` | `bool[]` |  |
+| Flags | `BoundarySimCluster_onHGCFrontFace` | `bool[]` |  |
+| Identity | `BoundarySimCluster_bunchCrossing` | `int32_t[]` |  |
+| Identity | `BoundarySimCluster_charge` | `int32_t[]` |  |
+| Identity | `BoundarySimCluster_eventId` | `int32_t[]` |  |
+| Identity | `BoundarySimCluster_pdgId` | `int32_t[]` |  |
+| Identity | `BoundarySimCluster_rawEventId` | `int32_t[]` |  |
+| Identity | `BoundarySimCluster_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event |
+| Identity | `BoundarySimCluster_CaloPartIdx` | `int32_t[]` | **SimCluster → CaloParticle link** |
+| Boundary | `BoundarySimCluster_trackIdAtBoundary` | `int32_t[]` | the track that crossed and opened the SimCluster; compared across configs |
+| Boundary | `BoundarySimCluster_boundaryEnergy` | `float[]` | energy at the crossing, rest mass included (`boundary_geometry.kinetic_energy`) |
+| Boundary | `BoundarySimCluster_boundaryEnergyNoMu` | `float[]` |  |
+| Boundary | `BoundarySimCluster_boundaryP4` | `float[]` |  |
+| Boundary | `BoundarySimCluster_boundaryPmag` | `float[]` |  |
+| Boundary | `BoundarySimCluster_boundaryPt` | `float[]` |  |
+| Boundary | `BoundarySimCluster_impactPoint_eta` | `float[]` | the momentum direction, not the position: docs/data_handling.md |
+| Boundary | `BoundarySimCluster_impactPoint_phi` | `float[]` |  |
+| Boundary | `BoundarySimCluster_impactPoint_t` | `float[]` |  |
+| Boundary | `BoundarySimCluster_impactPoint_x` | `float[]` |  |
+| Boundary | `BoundarySimCluster_impactPoint_y` | `float[]` |  |
+| Boundary | `BoundarySimCluster_impactPoint_z` | `float[]` | most crossings on each config's front face: Standard \|z\| = 293.5 cm, FineCalo 321.05 cm |
+| Kinematics | `BoundarySimCluster_eta` | `float[]` |  |
+| Kinematics | `BoundarySimCluster_mass` | `float[]` | **unusable**, as `SimCluster_mass` |
+| Kinematics | `BoundarySimCluster_phi` | `float[]` |  |
+| Kinematics | `BoundarySimCluster_pt` | `float[]` |  |
+| Position | `BoundarySimCluster_lastPos_x` | `float[]` |  |
+| Position | `BoundarySimCluster_lastPos_y` | `float[]` |  |
+| Position | `BoundarySimCluster_lastPos_z` | `float[]` |  |
+| Hit stats | `BoundarySimCluster_nHits` | `int32_t[]` |  |
+| Hit stats | `BoundarySimCluster_sumHitEnergy` | `float[]` | hit energy of this SimCluster **and its descendants**: never sum it over SimClusters |
+| Hit stats | `BoundarySimCluster_recEnergy` | `float[]` | reconstructed hit energy assigned to this SimCluster alone; summable |
+
+## SimCluster (34) — the legacy collection: one SimCluster per track that crossed the boundary, nested ones included (`--table legacy`).
 
 | Subgroup | Field | Type | Note |
 |---|---|---|---|
@@ -116,18 +161,18 @@ reordered.
 | Flags | `SimCluster_onHGCFrontFace` | `bool[]` | ~100% true in **both** configs despite their different boundary planes — non-discriminating |
 | Identity | `SimCluster_pdgId` | `int32_t[]` | |
 | Identity | `SimCluster_charge` | `int32_t[]` | |
-| Identity | `SimCluster_trackId` | `int32_t[]` | G4 track id — not stable across fc0/fc1, do not match on this |
+| Identity | `SimCluster_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event |
 | Identity | `SimCluster_eventId` | `int32_t[]` | |
 | Identity | `SimCluster_rawEventId` | `int32_t[]` | |
 | Identity | `SimCluster_bunchCrossing` | `int32_t[]` | |
 | Identity | `SimCluster_CaloPartIdx` | `int32_t[]` | **SimCluster → CaloParticle link** |
-| Boundary | `SimCluster_boundaryEnergy` | `float[]` | |
+| Boundary | `SimCluster_boundaryEnergy` | `float[]` | energy at the crossing, rest mass included (`boundary_geometry.kinetic_energy`) |
 | Boundary | `SimCluster_boundaryEnergyNoMu` | `float[]` | |
 | Boundary | `SimCluster_boundaryP4` | `float[]` | |
 | Boundary | `SimCluster_boundaryPmag` | `float[]` | |
 | Boundary | `SimCluster_boundaryPt` | `float[]` | |
 | Boundary | `SimCluster_trackIdAtBoundary` | `int32_t[]` | |
-| Boundary | `SimCluster_impactPoint_eta` | `float[]` | |
+| Boundary | `SimCluster_impactPoint_eta` | `float[]` | the momentum direction, not the position: docs/data_handling.md |
 | Boundary | `SimCluster_impactPoint_phi` | `float[]` | |
 | Boundary | `SimCluster_impactPoint_t` | `float[]` | |
 | Boundary | `SimCluster_impactPoint_x` | `float[]` | |
@@ -136,15 +181,15 @@ reordered.
 | Kinematics | `SimCluster_eta` | `float[]` | |
 | Kinematics | `SimCluster_phi` | `float[]` | |
 | Kinematics | `SimCluster_pt` | `float[]` | |
-| Kinematics | `SimCluster_mass` | `float[]` | **unusable** — see docs/data_handling.md |
+| Kinematics | `SimCluster_mass` | `float[]` | **unusable**: not a rest mass (it takes negative values); compute sqrt(E² − p²) or use `pdgId` |
 | Position | `SimCluster_lastPos_x` | `float[]` | |
 | Position | `SimCluster_lastPos_y` | `float[]` | |
 | Position | `SimCluster_lastPos_z` | `float[]` | |
 | Hit stats | `SimCluster_nHits` | `int32_t[]` | |
-| Hit stats | `SimCluster_sumHitEnergy` | `float[]` | one of three energy definitions — see docs/data_handling.md |
-| Hit stats | `SimCluster_recEnergy` | `float[]` | |
+| Hit stats | `SimCluster_sumHitEnergy` | `float[]` | hit energy of this SimCluster **and its descendants**: never sum it over SimClusters |
+| Hit stats | `SimCluster_recEnergy` | `float[]` | reconstructed hit energy assigned to this SimCluster alone; summable |
 
-## SimTrack (18) — G4 track segments; `SimClusterIdx` links a track to the boundary SimCluster it belongs to.
+## SimTrack (19) — G4 tracks; `SimClusterIdx` / `BoundarySimClusterIdx` link a track to the SimCluster it opened.
 
 | Subgroup | Field | Type | Note |
 |---|---|---|---|
@@ -153,21 +198,22 @@ reordered.
 | Identity | `SimTrack_charge` | `int32_t[]` | |
 | Identity | `SimTrack_trackId` | `int32_t[]` | |
 | Identity | `SimTrack_trackIdAtBoundary` | `int32_t[]` | |
-| Identity | `SimTrack_SimClusterIdx` | `int32_t[]` | SimTrack → SimCluster link |
+| Identity | `SimTrack_SimClusterIdx` | `int32_t[]` | SimTrack → SimCluster (legacy) link |
+| Identity | `SimTrack_BoundarySimClusterIdx` | `int32_t[]` | SimTrack → BoundarySimCluster link (*`bound_*` only*) |
 | Boundary | `SimTrack_boundaryMomentum_eta` | `float[]` | momentum **at the boundary record**, not at production |
-| Boundary | `SimTrack_boundaryMomentum_phi` | `float[]` | see docs/data_handling.md |
-| Boundary | `SimTrack_boundaryMomentum_pt` | `float[]` | see docs/data_handling.md |
+| Boundary | `SimTrack_boundaryMomentum_phi` | `float[]` | |
+| Boundary | `SimTrack_boundaryMomentum_pt` | `float[]` | |
 | Boundary | `SimTrack_boundaryPos_x` | `float[]` | |
 | Boundary | `SimTrack_boundaryPos_y` | `float[]` | |
 | Boundary | `SimTrack_boundaryPos_z` | `float[]` | |
 | Kinematics | `SimTrack_eta` | `float[]` | momentum **at production** — a different vector from `boundaryMomentum_*` |
-| Kinematics | `SimTrack_phi` | `float[]` | see docs/data_handling.md |
-| Kinematics | `SimTrack_pt` | `float[]` | see docs/data_handling.md |
+| Kinematics | `SimTrack_phi` | `float[]` | |
+| Kinematics | `SimTrack_pt` | `float[]` | |
 | Position | `SimTrack_lastPos_x` | `float[]` | |
 | Position | `SimTrack_lastPos_y` | `float[]` | |
 | Position | `SimTrack_lastPos_z` | `float[]` | |
 
-## Event-level (29) — per-event scalars, not per-object arrays.
+## Event-level (31) — per-event scalars, not per-object arrays.
 
 | Subgroup | Field | Type | Note |
 |---|---|---|---|
@@ -188,6 +234,7 @@ reordered.
 | Collection sizes | `nPFCand` | `int32_t` | |
 | Collection sizes | `nPFTICLCand` | `int32_t` | |
 | Collection sizes | `nSimCluster` | `int32_t` | |
+| Collection sizes | `nBoundarySimCluster` | `int32_t` | *`bound_*` only* |
 | Collection sizes | `nSimTrack` | `int32_t` | |
 | Collection sizes | `nTrackConv` | `int32_t` | |
 | Collection sizes | `nTrackDisp` | `int32_t` | |
@@ -198,12 +245,13 @@ reordered.
 | Cross-collection relationship counts | `nRecHitHGC_LayerCluster` | `int32_t` | |
 | Cross-collection relationship counts | `nRecHitHGC_MergedSimCluster` | `int32_t` | |
 | Cross-collection relationship counts | `nRecHitHGC_SimCluster` | `int32_t` | |
+| Cross-collection relationship counts | `nRecHitHGC_BoundarySimCluster` | `int32_t` | *`bound_*` only* |
 | Cross-collection relationship counts | `nTrack_TrackingPart` | `int32_t` | |
 | Cross-collection relationship counts | `nTrackingPart_Track` | `int32_t` | |
 
 ---
 
-**Total: 288 branches** (17+9+4+14+36+9+9+20+34+7+7+7+18+19+16+8+25+29).
+**Total: 414 branches** (17+9+4+14+36+9+9+25+34+34+7+7+7+19+84+19+16+8+25+31); 288 in the files without the boundary collection.
 ## Reference only — collections not needed for the boundary-SimCluster question
 
 Present in the files and documented for completeness, but none of these feeds
@@ -215,6 +263,8 @@ the CaloParticle → boundary-SimCluster comparison:
   `TrackConv_*` is the one plausible future exception: it refits tracks under
   the photon-conversion hypothesis, which is the topology these comparisons are
   about.
+- `TICLCand_*`, `ticlTracksters*`, `Candidate2Tracksters*` — TICL reconstruction output
+  (`bound_*` only).
 - `SimHitHGC{EE,HEB,HEF}_*` — raw G4 deposits one level below `RecHitHGC`,
   needed only if `RecHitHGC`'s SimCluster match proves too coarse.
 
@@ -387,3 +437,91 @@ the CaloParticle → boundary-SimCluster comparison:
 | Matching to Track | `TrackingPart_Track_MatchQual` | `float[]` | |
 | Matching to Track | `TrackingPart_TrackNumMatch` | `int32_t[]` | |
 
+## TICL (84) — *`bound_*` only; reco-level, not needed for this project's core question.* TICL candidates and the tracksters of four TICL steps (CLUE3DHigh, Recovery, Links, SuperclusteringDNN), with their counters and vertex lists.
+
+| Subgroup | Field | Type | Note |
+|---|---|---|---|
+| Collection sizes | `nCandidate2Tracksters` | `int32_t` | |
+| Candidate2Tracksters | `Candidate2Tracksters_nCandidate2TrackstersIndices` | `uint16_t[]` | |
+| Collection sizes | `nCandidate2TrackstersIndices` | `int32_t` | |
+| Candidate2TrackstersIndices | `Candidate2TrackstersIndices_tracksterIndex` | `uint32_t[]` | |
+| Collection sizes | `nTICLCand` | `int32_t` | |
+| TICLCand | `TICLCand_charge` | `int32_t[]` | |
+| TICLCand | `TICLCand_pdgID` | `int32_t[]` | |
+| TICLCand | `TICLCand_energy` | `float[]` | |
+| TICLCand | `TICLCand_eta` | `float[]` | |
+| TICLCand | `TICLCand_mass` | `float[]` | |
+| TICLCand | `TICLCand_p` | `float[]` | |
+| TICLCand | `TICLCand_phi` | `float[]` | |
+| TICLCand | `TICLCand_pt` | `float[]` | |
+| TICLCand | `TICLCand_raw_energy` | `float[]` | |
+| TICLCand | `TICLCand_time` | `float[]` | |
+| TICLCand | `TICLCand_timeError` | `float[]` | |
+| Collection sizes | `nticlTracksterLinksSuperclusteringDNN` | `int32_t` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_nticlTracksterLinksSuperclusteringDNNvertices` | `uint16_t[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_oticlTracksterLinksSuperclusteringDNNvertices` | `uint16_t[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_barycenter_eta` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_barycenter_phi` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_barycenter_x` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_barycenter_y` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_barycenter_z` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_raw_em_energy` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_raw_energy` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_raw_pt` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_regressed_energy` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_time` | `float[]` | |
+| ticlTracksterLinksSuperclusteringDNN | `ticlTracksterLinksSuperclusteringDNN_timeError` | `float[]` | |
+| Collection sizes | `nticlTracksterLinksSuperclusteringDNNvertices` | `int32_t` | |
+| ticlTracksterLinksSuperclusteringDNNvertices | `ticlTracksterLinksSuperclusteringDNNvertices_vertices` | `uint32_t[]` | |
+| ticlTracksterLinksSuperclusteringDNNvertices | `ticlTracksterLinksSuperclusteringDNNvertices_vertex_mult` | `float[]` | |
+| Collection sizes | `nticlTracksterLinks` | `int32_t` | |
+| ticlTracksterLinks | `ticlTracksterLinks_nticlTracksterLinksvertices` | `uint16_t[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_oticlTracksterLinksvertices` | `uint16_t[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_barycenter_eta` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_barycenter_phi` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_barycenter_x` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_barycenter_y` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_barycenter_z` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_raw_em_energy` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_raw_energy` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_raw_pt` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_regressed_energy` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_time` | `float[]` | |
+| ticlTracksterLinks | `ticlTracksterLinks_timeError` | `float[]` | |
+| Collection sizes | `nticlTracksterLinksvertices` | `int32_t` | |
+| ticlTracksterLinksvertices | `ticlTracksterLinksvertices_vertices` | `uint32_t[]` | |
+| ticlTracksterLinksvertices | `ticlTracksterLinksvertices_vertex_mult` | `float[]` | |
+| Collection sizes | `nticlTrackstersCLUE3DHigh` | `int32_t` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_nticlTrackstersCLUE3DHighvertices` | `uint16_t[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_oticlTrackstersCLUE3DHighvertices` | `uint16_t[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_barycenter_eta` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_barycenter_phi` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_barycenter_x` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_barycenter_y` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_barycenter_z` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_raw_em_energy` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_raw_energy` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_raw_pt` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_regressed_energy` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_time` | `float[]` | |
+| ticlTrackstersCLUE3DHigh | `ticlTrackstersCLUE3DHigh_timeError` | `float[]` | |
+| Collection sizes | `nticlTrackstersCLUE3DHighvertices` | `int32_t` | |
+| ticlTrackstersCLUE3DHighvertices | `ticlTrackstersCLUE3DHighvertices_vertices` | `uint32_t[]` | |
+| ticlTrackstersCLUE3DHighvertices | `ticlTrackstersCLUE3DHighvertices_vertex_mult` | `float[]` | |
+| Collection sizes | `nticlTrackstersRecovery` | `int32_t` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_nticlTrackstersRecoveryvertices` | `uint16_t[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_oticlTrackstersRecoveryvertices` | `uint16_t[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_barycenter_eta` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_barycenter_phi` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_barycenter_x` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_barycenter_y` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_barycenter_z` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_raw_em_energy` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_raw_energy` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_raw_pt` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_regressed_energy` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_time` | `float[]` | |
+| ticlTrackstersRecovery | `ticlTrackstersRecovery_timeError` | `float[]` | |
+| Collection sizes | `nticlTrackstersRecoveryvertices` | `int32_t` | |
+| ticlTrackstersRecoveryvertices | `ticlTrackstersRecoveryvertices_vertices` | `uint32_t[]` | |
+| ticlTrackstersRecoveryvertices | `ticlTrackstersRecoveryvertices_vertex_mult` | `float[]` | |
