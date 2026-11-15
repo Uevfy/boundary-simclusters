@@ -22,8 +22,8 @@ kinematic and includes rest mass, `recEnergy` is an exclusive deposit,
 `sumHitEnergy` counts a hit for a SimCluster and for its ancestors, so it must
 never be summed as a budget.
 
-The summary step of scripts/analyze.py (`--steps summary`), `run(sample, table)`
-for the tests. The pair needs its mappings first (`pipeline.match_events`).
+The summary step of scripts/analyze.py (`--steps summary`), `run(sample, table)`.
+The pair needs its mappings first (`pipeline.match_events`).
 """
 
 

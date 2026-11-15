@@ -4,7 +4,7 @@
     python scripts/analyze.py a.root b.root --steps figures --table legacy --tag s1
     python scripts/analyze.py a.root --steps figures --only energy n_per_event
 
-`run(sample)` is the figures step of scripts/analyze.py (and the tests).
+`run(sample)` is the figures step of scripts/analyze.py.
 
 Give one file and its partner is found (`samples.py`); give two in either order.
 Config, particle, energy and tables are read from the files, never their names.

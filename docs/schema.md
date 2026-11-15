@@ -2,9 +2,8 @@
 
 All 414 branches of the `Events` tree of the `bound_*` nanoML files, grouped by
 collection and by relation within each collection. Identical (name, type) in
-both configs. The older files without the boundary collection (`testNanoML.root`,
-`FinetestNanoML.root`, `11_*`, `22_*`, `photon_*`) carry the first 288 of them:
-everything except the sections and rows marked *`bound_*` only*.
+both configs. Files made without the BoundarySimCluster nano table carry the
+first 288 of them: everything except the sections and rows marked *`bound_*` only*.
 Regenerate/verify with `scripts/tools/print_root_branches.py`.
 
 Types are as reported by `uproot`; `[]` means one jagged array entry per

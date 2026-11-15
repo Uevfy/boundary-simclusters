@@ -25,8 +25,8 @@ Reads the legacy table (`SimCluster_*`);
 no event pairing is needed.
 
 Usage:
-    python scripts/classify_boundary_surface.py testNanoML.root FinetestNanoML.root
-    python scripts/classify_boundary_surface.py 11_fc1_s1_testNanoML.root --tag gamma_s1
+    python scripts/studies/classify_boundary_surface.py testNanoML.root FinetestNanoML.root
+    python scripts/studies/classify_boundary_surface.py 11_fc1_s1_testNanoML.root --tag gamma_s1
 """
 
 import argparse

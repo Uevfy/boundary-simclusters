@@ -4,5 +4,5 @@
         -> classify_decompositions
 
 Run from the command line by scripts/analyze.py (`--steps` for a subset), and
-called by the tests.
+all at once by `numbers.measure`.
 """

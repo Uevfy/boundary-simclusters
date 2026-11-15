@@ -11,8 +11,7 @@ Figures from this project are **not CMS-approved**.
 
 ## Where to start
 
-1. Follow [Setup](#setup), get the ROOT files (see [Data](#data)), and run `pytest` to confirm
-   your environment reproduces the stored numbers.
+1. Follow [Setup](#setup), then produce a sample pair as described in [Data](#data).
 2. Read `docs/data_handling.md`. The branches have traps, such as events that do not line up
    between the files and an `eta` branch that is not a position.
 3. Run `scripts/analyze.py` on one pair, then look through its report and figures.
@@ -29,38 +28,48 @@ python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 pip install -e .          # makes src/boundary_simclusters importable
-pytest                    # skips every sample whose input files are absent
 ```
 
 ## Data
 
-**The samples are not in this repository.** Without them the code can be read and installed, but
-not run.
-Simulation and production happen outside this repository, so nothing here can regenerate
-them.
+**No samples come with this repository: you produce them yourself.** Simulation and
+production run in CMSSW, outside this repository. Use these branches:
 
-All samples are two-particle guns in |η| 1.70–2.70, 1000 events, seed 1, with
-`CMSSW_20_0_0_pre1`, global tag `150X_mcRun4_realistic_v1`, HGCal v17 and caloBase 2030/v7. They come in pairs that differ only in the FineCalo
-switches. The nanoML files go in the repo root, the ancestry files in `data/processed/`:
+| repository | branch | what it holds |
+|---|---|---|
+| [Uevfy/production_tests](https://github.com/Uevfy/production_tests/tree/d121-production) | `d121-production` | `GSD_GUN.py`, `RECO.py`, `nanoML_cfg.py` with the BoundarySimCluster table, batch submission. Its README is the production recipe |
+| [Uevfy/cmssw](https://github.com/Uevfy/cmssw/tree/thesis-production) | `thesis-production` | the pepr `CMSSW_20_0_0_pre1` used for the samples |
+| [Uevfy/reco-prodtools](https://github.com/Uevfy/reco-prodtools/tree/thesis-production) | `thesis-production` | the GSD fragments, Standard and FineCalo, and `produceSkeletons_D121.sh` |
 
-| tag | gun | nanoML (`bound_*`, both SimCluster collections) | RECO (only for ancestry) |
-|---|---|---|---|
-| `e200` | e⁻ 200 GeV | `bound_electron_fc{0,1}_200GeV_testNanoML.root` | `testRECO.root`, `FinetestRECO.root` |
-| `e20` | e⁻ 20 GeV | `bound_electron_fc{0,1}_20GeV_testNanoML.root` | `22_fc{0,1}_20GeV_testRECO.root` |
-| `g200` | γ 200 GeV | `bound_photon_fc{0,1}_200GeV_testNanoML.root` | `11_fc{0,1}_s1_testRECO.root` |
-| `g20` | γ 20 GeV | `bound_photon_fc{0,1}_20GeV_testNanoML.root` | `photon_fc{0,1}_20GeV_testRECO.root` |
+Follow the setup in the `d121-production` README, but take these forks instead of the
+`dgaytanv` ones it names:
 
-The golden test's fifth sample, `s1`, is `testNanoML.root` and `FinetestNanoML.root`: the
-200 GeV electrons with only the legacy collection.
+```bash
+git cms-merge-topic Uevfy:thesis-production
+git clone -b thesis-production https://github.com/Uevfy/reco-prodtools.git reco_prodtools
+git clone -b d121-production https://github.com/Uevfy/production_tests.git
+```
 
-NanoML has no parent links, so the classification reads them from
-`data/processed/ancestry_<tag>_<fc0|fc1>.parquet`, written once from RECO by
-`scripts/tools/extract_ancestry.py`. Without those files a differing CaloParticle can only be
-called `different tracks`, and the run warns.
+A pair is the same gun run twice with the same seed, once per config (`useFineCalo=0` for
+Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML. The original
+results come from two-particle guns in |η| 1.70–2.70, 1000 events, seed 1: e⁻ and γ at 20 and
+200 GeV, `CMSSW_20_0_0_pre1`, global tag `150X_mcRun4_realistic_v1`, HGCal v17 and caloBase
+2030/v7. Those samples were made with `master-production`; `d121-production` gives the same
+SimClusters event by event.
 
-Numeric filename prefixes are production labels, not pdgIds: `11_` is the photon gun and
-`22_` the electron gun. The code reads particle, energy and config from the file contents,
-never from the name.
+**Keep the RECO files.** NanoML has no parent links, so the classification reads them from
+RECO, through `data/processed/ancestry_<tag>_<fc0|fc1>.parquet`:
+
+```bash
+python scripts/tools/extract_ancestry.py std_NanoML.root fine_NanoML.root std_RECO.root fine_RECO.root --tag g20
+```
+
+Use the same `--tag` as for `analyze.py`. Without those files a CaloParticle whose root tracks
+differ can only be called `different tracks`, and the run warns.
+
+Put both nanoML files of a pair in one folder, since a missing partner is searched for there,
+and keep each production in its own folder. File names carry no meaning: the code reads
+particle, energy and config from the contents.
 
 ## Running it
 
@@ -133,9 +142,8 @@ frame = samples.simcluster_frame(sample.tree("fc1"), "boundary", "fc1")   # one 
 
 Compare across the two files only through the mappings from `analyze.py --steps match`
 (`sample.mappings()`), never by row or index. For figures, use `hep_style` and save through
-`output_paths`, which works out the folder from the data. After any change under `src/`, run
-`pytest`. If a number moved on purpose, regenerate with `python tests/golden.py` and commit the new
-`tests/golden.json` with the change (`tests/README.md`).
+`output_paths`, which works out the folder from the data. After any change under `src/`, rerun
+`analyze.py` on a pair and compare its report with the one from before the change.
 
 ## Layout
 
@@ -149,7 +157,6 @@ src/boundary_simclusters/     the library, imported and never run
     hep_style.py              the figure style
     output_paths.py           where each output belongs, read from the data
 scripts/                      analyze.py, studies/, tools/
-tests/                        the regression test (tests/README.md)
 docs/                         see Documentation below
 ```
 
@@ -157,12 +164,6 @@ docs/                         see Documentation below
 
 **Figures.** `hep_style.save` writes each figure as a PNG with its title and no experiment label.
 A PDF version with the label "Private work (CMS simulation)" is commented out in `save`.
-
-## Tests
-
-`pytest` reruns the pipeline on the five samples and compares every number with
-`tests/golden.json`, in about a minute. It proves the code still gives what it gave, not that
-it is right. See `tests/README.md`.
 
 ## Documentation
 

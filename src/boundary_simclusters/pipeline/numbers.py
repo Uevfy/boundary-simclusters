@@ -1,9 +1,9 @@
 """The standard run's headline numbers for one pair, as one nested dict.
 
 `measure(sample, table)` runs every step on `sample` (the five `run()`
-functions, as scripts/analyze.py does) and returns the numbers below. The
-regression test (tests/golden.py, tests/golden.json) compares it with the stored
-values.
+functions, as scripts/analyze.py does) and returns the numbers below.
+scripts/studies/compare_productions.py sets them side by side for two productions
+of one sample.
 
 The steps write their usual files to `output_paths.OUT` / `.PROCESSED`; a
 caller that wants them elsewhere wraps the call in `output_paths.redirected`.

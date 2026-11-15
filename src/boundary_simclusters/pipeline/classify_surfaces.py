@@ -3,7 +3,7 @@
     python scripts/analyze.py bound_photon_fc0_200GeV_testNanoML.root --steps surfaces
     python scripts/analyze.py a.root b.root --steps surfaces --table legacy --tag s1 --excel
 
-The surfaces step of scripts/analyze.py, `run(sample)` for the tests.
+The surfaces step of scripts/analyze.py, `run(sample)`.
 
 The two mechanisms test two different Geant4 volumes -- Standard the `CALO`
 polycone, FineCalo the `HGCal` polycone -- so a crossing is

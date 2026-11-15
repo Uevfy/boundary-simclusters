@@ -122,7 +122,7 @@ def _writing_to(out, processed):
 
 def redirected(workdir):
     """Point `OUT` and `PROCESSED` at `workdir/outputs`, `workdir/processed` for
-    the duration, so a run writes nothing into the repo (the tests)."""
+    the duration, so a run writes nothing into the repo (compare_productions.py)."""
     return _writing_to(Path(workdir) / "outputs", Path(workdir) / "processed")
 
 
