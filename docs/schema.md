@@ -24,7 +24,7 @@ reordered.
 | Identity | `CaloPart_pdgId` | `int32_t[]` | |
 | Identity | `CaloPart_charge` | `int32_t[]` | |
 | Identity | `CaloPart_GenPartIdx` | `int32_t[]` | index into `GenPart` — **−1 for every CaloParticle in every local file**, unusable (docs/data_handling.md) |
-| Identity | `CaloPart_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event; its index can differ between the files |
+| Identity | `CaloPart_trackId` | `int32_t[]` | Geant4 track id: a track stored in both files of a pair has the same id in both (`classify_decompositions.id_agreement` checks this on every run); ids restart per event; its index can differ between the files |
 | Identity | `CaloPart_eventId` | `int32_t[]` | |
 | Identity | `CaloPart_rawEventId` | `int32_t[]` | |
 | Identity | `CaloPart_bunchCrossing` | `int32_t[]` | |
@@ -125,7 +125,7 @@ reordered.
 | Identity | `BoundarySimCluster_eventId` | `int32_t[]` |  |
 | Identity | `BoundarySimCluster_pdgId` | `int32_t[]` |  |
 | Identity | `BoundarySimCluster_rawEventId` | `int32_t[]` |  |
-| Identity | `BoundarySimCluster_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event |
+| Identity | `BoundarySimCluster_trackId` | `int32_t[]` | Geant4 track id: a track stored in both files of a pair has the same id in both (`classify_decompositions.id_agreement` checks this on every run); ids restart per event |
 | Identity | `BoundarySimCluster_CaloPartIdx` | `int32_t[]` | **SimCluster → CaloParticle link** |
 | Boundary | `BoundarySimCluster_trackIdAtBoundary` | `int32_t[]` | the track that crossed and opened the SimCluster; compared across configs |
 | Boundary | `BoundarySimCluster_boundaryEnergy` | `float[]` | energy at the crossing, rest mass included (`boundary_geometry.kinetic_energy`) |
@@ -161,7 +161,7 @@ reordered.
 | Flags | `SimCluster_onHGCFrontFace` | `bool[]` | ~100% true in **both** configs despite their different boundary planes — non-discriminating |
 | Identity | `SimCluster_pdgId` | `int32_t[]` | |
 | Identity | `SimCluster_charge` | `int32_t[]` | |
-| Identity | `SimCluster_trackId` | `int32_t[]` | Geant4 track id: the same particle carries the same id in both configs (checked on every run by `classify_decompositions`); ids restart per event |
+| Identity | `SimCluster_trackId` | `int32_t[]` | Geant4 track id: a track stored in both files of a pair has the same id in both (`classify_decompositions.id_agreement` checks this on every run); ids restart per event |
 | Identity | `SimCluster_eventId` | `int32_t[]` | |
 | Identity | `SimCluster_rawEventId` | `int32_t[]` | |
 | Identity | `SimCluster_bunchCrossing` | `int32_t[]` | |
