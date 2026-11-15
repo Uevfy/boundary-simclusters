@@ -38,7 +38,7 @@ production run in CMSSW, outside this repository. Use these branches:
 |---|---|---|
 | [Uevfy/production_tests](https://github.com/Uevfy/production_tests/tree/d121-production) | `d121-production` | `GSD_GUN.py`, `RECO.py`, `nanoML_cfg.py` with the BoundarySimCluster table, batch submission. Its README is the production recipe |
 | [Uevfy/cmssw](https://github.com/Uevfy/cmssw/tree/thesis-production) | `thesis-production` | the pepr `CMSSW_20_0_0_pre1` used for the samples |
-| [Uevfy/reco-prodtools](https://github.com/Uevfy/reco-prodtools/tree/thesis-production) | `thesis-production` | the GSD fragments, Standard and FineCalo, and `produceSkeletons_D121.sh` |
+| [Uevfy/reco-prodtools](https://github.com/Uevfy/reco-prodtools/tree/thesis-production) | `thesis-production` | the fragments `GSD_GUN.py` and `RECO.py` import (GSD Standard and FineCalo, RECO) as used for the samples, and `produceSkeletons_D121.sh` |
 
 Follow the setup in the `d121-production` README, but take these forks instead of the
 `dgaytanv` ones it names:
