@@ -40,7 +40,7 @@ production run in CMSSW, outside this repository. Use these branches:
 | [Uevfy/cmssw](https://github.com/Uevfy/cmssw/tree/thesis-production) | `thesis-production` | the pepr `CMSSW_20_0_0_pre1` used for the samples |
 | [Uevfy/reco-prodtools](https://github.com/Uevfy/reco-prodtools/tree/thesis-production) | `thesis-production` | the fragments `GSD_GUN.py` and `RECO.py` import (GSD Standard and FineCalo, RECO) as used for the samples, and `produceSkeletons_D121.sh` |
 
-**Setup**, on an EL9 node (lxplus9, cmslpc-el9, …) with about 10 GB free:
+**Setup**
 
 ```bash
 export SCRAM_ARCH=el9_amd64_gcc13
