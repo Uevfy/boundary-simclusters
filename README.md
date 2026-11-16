@@ -64,8 +64,7 @@ instead. The reco-prodtools fork already holds the fragments the samples were ma
 Standard, `useFineCalo=1` for FineCalo), each through GSD, RECO and nanoML; the commands are in
 the `d121-production` README. The original results come from two-particle guns in |η| 1.70–2.70:
 e⁻ and γ at 20 and 200 GeV, 1000 events, seed 1. In `GSD_GUN.py` options that is `particle=11` or
-`22`, `minE` and `maxE` both 20 or both 200, `maxEvents=1000`, `seed=1`. Set `minE` and `maxE`:
-run directly with `cmsRun`, the default gun ignores `energy=` and shoots flat in 20–200 GeV. Those
+`22`, `minE` and `maxE` both 20 or both 200, `maxEvents=1000`, `seed=1`. Those
 samples were made with `master-production`; `d121-production` gives the same SimClusters event
 by event.
 
