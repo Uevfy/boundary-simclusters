@@ -43,6 +43,7 @@ production run in CMSSW, outside this repository. Use these branches:
 **Setup**
 
 ```bash
+source /cvmfs/cms.cern.ch/cmsset_default.sh    # defines cmsrel, cmsenv; needs Linux 9 with /cvmfs
 export SCRAM_ARCH=el9_amd64_gcc13
 cmsrel CMSSW_20_0_0_pre1
 cd CMSSW_20_0_0_pre1/src
